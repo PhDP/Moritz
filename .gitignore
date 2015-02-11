@@ -1,0 +1,29 @@
+# All the crap cmake generates:
+cmake_install.cmake
+CTestTestfile.cmake
+*.txt
+Testing/
+CMakeFiles/
+Makefile
+CMakeCache.txt
+
+# Build files
+Debug
+build
+*.a
+*.o
+
+# IDE files
+*.swp
+
+# Doxygen
+doc
+
+# Visual Studio files
+*.vcxproj
+*.filters
+*.dir
+*.sln
+*.opensdf
+*.sdf
+*.suo
