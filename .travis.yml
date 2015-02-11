@@ -1,0 +1,38 @@
+language:
+  - cpp
+
+matrix:
+  include:
+    - os: linux
+      env: BUILD_TYPE=DEBUG
+      compiler: clang
+    - os: linux
+      env: BUILD_TYPE=RELEASE
+      compiler: clang
+    - os: linux
+      env: BUILD_TYPE=DEBUG
+      compiler: gcc
+    - os: linux
+      env: BUILD_TYPE=RELEASE
+      compiler: gcc
+
+
+before_install:
+  - if [ "$CXX" == "g++" ]; then sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test; fi
+  - if [ "$CXX" == "clang++" ]; then sudo add-apt-repository -y ppa:h-rayflood/llvm; fi
+  - sudo apt-get update -qq
+
+install:
+  - if [ "$CXX" = "g++" ]; then sudo apt-get install -qq g++-4.9; fi
+  - if [ "$CXX" = "g++" ]; then export CXX="g++-4.9"; fi
+  - if [ "$CXX" == "clang++" ]; then sudo apt-get install --allow-unauthenticated -qq clang-3.5; fi
+  - if [ "$CXX" == "clang++" ]; then export CXX="clang++-3.5"; fi
+
+before_script:
+  - mkdir build && cd build
+
+script:
+  - $CXX --version
+  - cmake .. -DCMAKE_BUILD_TYPE=${BUILD_TYPE}
+  - make
+
