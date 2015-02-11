@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <set>
+#include <vector>
 #include "tbranch.hh"
 #include "network.hh"
 #include "point.hh"
@@ -12,6 +13,8 @@ namespace wagner {
 /** Species as the leaf of a phylogenetic tree. */
 class species : public tbranch {
 private:
+  std::vector<bool> m_traits;
+
   // Location/group map:
   std::map<point, int> m_locations;
 
@@ -62,6 +65,12 @@ public:
 
   /** Remove the species from a location. */
   void rmv_from(const point &p);
+
+  /** Number of different traits from another species. */
+  unsigned int num_differences(const species &s) const;
+
+  /** Returns true if the species have the same traits. */
+  bool same_traits_as(const species &s) const;
 
   /** Get most-recent-common-ancestor info. */
   unsigned int get_mrca(const species &s) const;

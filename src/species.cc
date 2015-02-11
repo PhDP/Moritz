@@ -99,6 +99,22 @@ void species::rmv_from(const point &p) {
   m_locations.erase(p);
 }
 
+unsigned int species::num_differences(const species &s) const {
+  unsigned int delta = 0;
+  for (int i = 0; i < m_traits.size(); ++i)
+    delta += m_traits[i] != s.m_traits[i];
+  return delta;
+}
+
+bool species::same_traits_as(const species &s) const { 
+  for (int i = 0; i < m_traits.size(); ++i) {
+    if (m_traits[i] != s.m_traits[i]) {
+      return false;
+    }
+  }
+  return true;
+}
+
 unsigned int species::get_mrca(const species &s) const {
   tbranch *p = parent();
   std::set<tbranch *> parents;
