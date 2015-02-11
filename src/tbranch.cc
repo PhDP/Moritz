@@ -5,6 +5,8 @@
 #include "common.hh"
 #include "tbranch.hh"
 
+namespace wagner {
+
 tbranch::tbranch(tbranch *p, tbranch *l, tbranch *r)
     : m_parent(p), m_left(l), m_right(r) {
   m_end_date = 0;
@@ -69,12 +71,12 @@ unsigned int tbranch::max_end_date() const {
   }
 }
 
-unsigned int tbranch::distance() const {
+unsigned int tbranch::parent_distance() const {
   return (m_parent == nullptr) ? 0 : m_end_date - m_parent->end_date();
 }
 
 unsigned int tbranch::total_distance() const {
-  return (m_parent == nullptr) ? 0 : distance() + m_parent->total_distance();
+  return (m_parent == nullptr) ? 0 : parent_distance() + m_parent->total_distance();
 }
 
 unsigned int tbranch::nodes() const {
@@ -107,9 +109,11 @@ unsigned int tbranch::level() const {
 std::string tbranch::newick() const {
   std::ostringstream o;
   o << "(" << m_left->newick() << "," << m_right->newick()
-    << "):" << distance();
+    << "):" << parent_distance();
   if (root()) {
     o << ";";
   }
   return o.str();
+}
+
 }

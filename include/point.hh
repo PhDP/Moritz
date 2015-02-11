@@ -1,8 +1,11 @@
-#pragma once
+#ifndef WAGNER_POINT_H_
+#define WAGNER_POINT_H_
 
 #include <iostream>
 #include <cmath>
 #include <set>
+
+namespace wagner {
 
 /** An immutable two-dimensional point. */
 class point {
@@ -54,7 +57,7 @@ public:
 };
 
 /** Compute the distance in Euclidean space between two points. */
-inline double distance(const point &p1, const point &p2) {
+inline double euclidean_distance(const point &p1, const point &p2) {
   return hypot(p1.x - p2.x, p1.y - p2.y);
 }
 
@@ -77,3 +80,7 @@ inline point centroid(const std::set<point> &ps) {
 
   return point(x_, y_);
 }
+
+}
+
+#endif /* WAGNER_POINT_H_ */

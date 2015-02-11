@@ -29,6 +29,7 @@
 #define wagner_log_aleph 3
 
 using namespace std;
+using namespace wagner;
 
 int main(int argc, char *argv[]) {
   unsigned int model = wagner_aleph;

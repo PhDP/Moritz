@@ -1,6 +1,9 @@
-#pragma once
+#ifndef WAGNER_COMMON_H_
+#define WAGNER_COMMON_H_
 
 #include <cmath>
+
+namespace wagner {
 
 /** Mathematical constant e. */
 #define math_e 2.71828182845904523536
@@ -40,3 +43,7 @@
 
 /** Min of five values. */
 #define min5(a, b, c, d, e) (min4(a, b, c, d) < (e) ? min4(a, b, c, d) : (e))
+
+}
+
+#endif /* WAGNER_COMMON_H */

@@ -3,6 +3,8 @@
 #include <cmath>
 #include "point.hh"
 
+namespace wagner {
+
 point::point(double x_, double y_) : x(x_), y(y_) {
   // ...
 }
@@ -57,4 +59,6 @@ std::string point::xml() const {
 std::ostream &operator<<(std::ostream &os, const point &p) {
   os << '(' << p.x << ", " << p.y << ')';
   return os;
+}
+
 }

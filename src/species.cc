@@ -10,6 +10,8 @@
 #include "species.hh"
 #include "point.hh"
 
+namespace wagner {
+
 species::species(unsigned int i) : tbranch(nullptr, nullptr, nullptr), id(i) {
   //
 }
@@ -157,7 +159,7 @@ std::string species::name() const {
 
 std::string species::newick() const {
   std::ostringstream o;
-  o << "species" << id << ':' << distance();
+  o << "species" << id << ':' << parent_distance();
   return o.str();
 }
 
@@ -176,4 +178,6 @@ std::string species::get_info(unsigned int time) const {
 std::ostream &operator<<(std::ostream &os, const species &s) {
   os << "<species> <id>" << s.id << "</id> </species>";
   return os;
+}
+
 }

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef WAGNER_SPECIESTREE_HH_
+#define WAGNER_SPECIESTREE_HH_
 
 #include <ostream>
 #include <string>
@@ -6,6 +7,8 @@
 #include "tbranch.hh"
 #include "species.hh"
 #include "point.hh"
+
+namespace wagner {
 
 /** An object to store species and their phylogeny. */
 class speciestree {
@@ -53,3 +56,8 @@ public:
   /** Return the tree in Newick format. */
   friend std::ostream &operator<<(std::ostream &os, const speciestree &t);
 };
+
+}
+
+#endif /* WAGNER_SPECIESTREE_HH_ */
+

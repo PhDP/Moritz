@@ -1,10 +1,13 @@
-#pragma once
+#ifndef WAGNER_SPECIES_HH_
+#define WAGNER_SPECIES_HH_
 
 #include <iostream>
 #include <set>
 #include "tbranch.hh"
 #include "network.hh"
 #include "point.hh"
+
+namespace wagner {
 
 /** Species as the leaf of a phylogenetic tree. */
 class species : public tbranch {
@@ -88,3 +91,7 @@ public:
   /** Print name in XML format. */
   friend std::ostream &operator<<(std::ostream &os, const species &s);
 };
+
+}
+
+#endif /* WAGNER_SPECIES_HH_ */

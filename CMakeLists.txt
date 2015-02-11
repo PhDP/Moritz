@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 2.8)
-project (benchmark)
+project (wagner2)
 
 # Make sure we can import out CMake functions
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")

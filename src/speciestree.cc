@@ -8,6 +8,8 @@
 #include "species.hh"
 #include "point.hh"
 
+namespace wagner {
+
 speciestree::speciestree() {
   m_id_count = 0;
   species *s0 = new species(m_id_count++);
@@ -124,4 +126,6 @@ std::set<species *>::const_iterator speciestree::end() const {
 std::ostream &operator<<(std::ostream &os, const speciestree &t) {
   os << t.newick();
   return os;
+}
+
 }

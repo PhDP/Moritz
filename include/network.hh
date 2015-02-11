@@ -1,4 +1,5 @@
-#pragma once
+#ifndef WAGNER_NETWORK_H_
+#define WAGNER_NETWORK_H_
 
 #include <iostream>
 #include <cstdio>
@@ -6,6 +7,8 @@
 #include <map>
 #include <set>
 #include <random>
+
+namespace wagner {
 
 template <typename T> class network {
 private:
@@ -144,7 +147,7 @@ void network<T>::rgg(unsigned int order, double radius, std::mt19937_64 &rng) {
   }
   for (auto i : m_net) {
     for (auto j : m_net) {
-      if (distance(i.first, j.first) < radius) {
+      if (euclidean_distance(i.first, j.first) < radius) {
         add_edges(i.first, j.first);
       }
     }
@@ -240,3 +243,7 @@ std::ostream &operator<<(std::ostream &os, const network<T> &net) {
   os << "  </graph>\n</graphml>\n";
   return os;
 }
+
+}
+
+#endif /* WAGNER_NETWORK_H_ */

@@ -1,10 +1,13 @@
-#pragma once
+#ifndef WAGNER_TBRANCH_HH_
+#define WAGNER_TBRANCH_HH_
 
 #include <iostream>
 #include <sstream>
 #include <ostream>
 #include <string>
 #include "common.hh"
+
+namespace wagner {
 
 /** An object for strictly binary trees: each node has either 2 or 0 children.
  */
@@ -57,7 +60,7 @@ public:
   bool strictly_binary() const;
 
   /** Distance between this node and its parent. */
-  unsigned int distance() const;
+  unsigned int parent_distance() const;
 
   /** Return the distance from the node to the beginning of the tree. */
   unsigned int total_distance() const;
@@ -86,3 +89,7 @@ public:
   /** Recursive function to get the Newick format. */
   virtual std::string newick() const;
 };
+
+}
+
+#endif /* WAGNER_TBRANCH_HH_ */

@@ -1,5 +1,5 @@
-#ifndef WAGNER2_UTILS_HH_
-#define WAGNER2_UTILS_HH_
+#ifndef WAGNER_UTILS_HH_
+#define WAGNER_UTILS_HH_
 
 #include <iostream>
 #include <sstream>
@@ -24,4 +24,4 @@ std::string showBits(const T &t) {
 
 }
 
-#endif /* WAGNER2_UTILS_HH_ */
+#endif /* WAGNER_UTILS_HH_ */
