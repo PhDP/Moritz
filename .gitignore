@@ -2,6 +2,7 @@
 cmake_install.cmake
 CTestTestfile.cmake
 *.txt
+!CMakeLists.txt
 Testing/
 CMakeFiles/
 Makefile

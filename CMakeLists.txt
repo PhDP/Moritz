@@ -1,0 +1,47 @@
+cmake_minimum_required (VERSION 2.8)
+project (benchmark)
+
+# Make sure we can import out CMake functions
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+
+# Import and build Google Test
+include(ExternalProject)
+set_directory_properties(properties EP_PREFIX "${CMAKE_BINARY_DIR}/third_party")
+ExternalProject_Add(googletest
+  URL "https://googlemock.googlecode.com/files/gmock-1.7.0.zip"
+  SOURCE_DIR "${CMAKE_BINARY_DIR}/third_party/gtest"
+  CMAKE_ARGS "-DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}"
+  INSTALL_COMMAND "")
+ExternalProject_Get_Property(googletest source_dir)
+include_directories(${source_dir}/include)
+ExternalProject_Get_Property(googletest binary_dir)
+link_directories(${binary_dir})
+
+# Enable the latest C++ standard possible
+include(CheckCXXCompilerFlag)
+check_cxx_compiler_flag(--std=c++14 HAVE_FLAG_CXX_14)
+check_cxx_compiler_flag(--std=c++11 HAVE_FLAG_CXX_11)
+check_cxx_compiler_flag(--std=c++0x HAVE_FLAG_CXX_0X)
+if (HAVE_FLAG_CXX_14)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++14")
+elseif (HAVE_FLAG_CXX_11)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++11")
+elseif (HAVE_FLAG_CXX_0X)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++0x")
+endif()
+
+# Release flags
+#add_cxx_compiler_flag(-fno-strict-aliasing RELEASE)
+
+# Add a debug definition so we can make decisions in the compilation
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
+
+# Set up directories
+include_directories(${PROJECT_SOURCE_DIR}/include)
+include_directories(${PROJECT_SOURCE_DIR}/src)
+
+# Build the targets
+enable_testing()
+add_subdirectory(src)
+#add_subdirectory(test)
+
