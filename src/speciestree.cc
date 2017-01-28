@@ -22,11 +22,11 @@ speciestree::~speciestree() {
   delete m_root;
 }
 
-unsigned int speciestree::num_species() {
+size_t speciestree::num_species() {
   return m_tips.size();
 }
 
-std::set<species *> speciestree::rmv_extinct(unsigned int date) {
+std::set<species *> speciestree::rmv_extinct(size_t date) {
   std::set<species *> to_rmv;
   for (auto i : m_tips) {
     species *s = i;
@@ -63,7 +63,7 @@ std::set<species *> speciestree::rmv_extinct(unsigned int date) {
   return to_rmv;
 }
 
-species *speciestree::speciate(species *p, unsigned int date) {
+species *speciestree::speciate(species *p, size_t date) {
   species *s0 = p;
   tbranch *new_parent = new tbranch(s0->parent(), nullptr, nullptr);
   new_parent->set_end_date(date);
@@ -97,7 +97,7 @@ species *speciestree::speciate(species *p, unsigned int date) {
   return s1;
 }
 
-void speciestree::stop(unsigned int date) {
+void speciestree::stop(size_t date) {
   for (auto i : m_tips) {
     i->set_end_date(date);
   }

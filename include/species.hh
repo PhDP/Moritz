@@ -12,93 +12,85 @@ namespace wagner {
 
 /** Species as the leaf of a phylogenetic tree. */
 class species : public tbranch {
-private:
   std::vector<bool> m_traits;
+  std::map<point, int> m_locations; // Location/group map:
+  void m_grouping(const point &p, int gid, network<point> &n); // Recursive function used to establish the groups:
+  size_t m_groups; // Number of groups:
 
-  // Location/group map:
-  std::map<point, int> m_locations;
-
-  // Recursive function used to establish the groups:
-  void m_grouping(const point &p, int gid, network<point> &n);
-
-  // Number of groups:
-  unsigned int m_groups;
-
-public:
+ public:
   /** Unique ID of the species. */
-  const unsigned int id;
+  const size_t id;
 
   /** Basic constructor. */
-  species(unsigned int i);
+  species(size_t i);
 
   /** Basic destructor. */
   ~species();
 
   /** Return true if extinct. */
-  bool extinct() const;
+  auto extinct() const -> bool;
 
   /** Number of populations. **/
-  unsigned int size() const;
+  auto size() const -> size_t;
 
   /** Number of groups. */
-  unsigned int num_groups() const;
+  auto num_groups() const -> size_t;
 
   /** Take a pointer to a spatial network, update the groups, return the number
    * of groups. */
-  unsigned int up_groups(network<point> &n);
+  auto up_groups(network<point> &n) -> size_t;
 
   /** Pop the gth group (that is: store the set of locations in a set, remove
    * them from this species and return it. */
-  std::set<point> pop_group(int g);
+  auto pop_group(int g) -> std::set<point>;
 
   /** Return the set of locations. */
-  std::set<point> get_locations() const;
+  auto get_locations() const -> std::set<point>;
 
   /** Test if the species is at the given location. */
-  bool is_in(const point &p) const;
+  auto is_in(const point &p) const -> bool;
 
   /** Add a location to the species. */
-  void add_to(const point &p);
+  auto add_to(const point &p) -> void;
 
   /** Add a location to the species. */
-  void add_to(const std::set<point> &ps);
+  auto add_to(const std::set<point> &ps) -> void;
 
   /** Remove the species from a location. */
-  void rmv_from(const point &p);
+  auto rmv_from(const point &p) -> void;
 
   /** Number of different traits from another species. */
-  unsigned int num_differences(const species &s) const;
+  auto num_differences(const species &s) const -> size_t;
 
   /** Returns true if the species have the same traits. */
-  bool same_traits_as(const species &s) const;
+  auto same_traits_as(const species &s) const -> bool;
 
   /** Get most-recent-common-ancestor info. */
-  unsigned int get_mrca(const species &s) const;
+  auto get_mrca(const species &s) const -> size_t;
 
   /** Get most-recent-common-ancestor info given a set of parents. */
-  unsigned int get_mrca(const std::set<tbranch *> &ps) const;
+  auto get_mrca(const std::set<tbranch *> &ps) const -> size_t;
 
-  /** Return the set of locations where both species are found (co-occurence).
-   */
-  std::set<point> operator&(species &s) const;
+  /** Return the set of locations where both species are found (co-occurence). */
+  auto operator&(species &s) const -> std::set<point>;
 
   /** Return the species' name. */
-  std::string name() const;
+  auto name() const -> std::string;
 
   /** Get info on the species in XML format. */
-  std::string get_info(unsigned int time) const;
+  auto get_info(size_t time) const -> std::string;
 
   /** Return in newick format. */
   virtual std::string newick() const;
 
   // Use the ID to test equality and order:
-  bool operator==(const species &s) const;
-  bool operator!=(const species &s) const;
-  bool operator<(const species &s) const;
-  bool operator>(const species &s) const;
+  auto operator==(const species &s) const -> bool;
+  auto operator!=(const species &s) const -> bool;
+  auto operator<(const species &s) const -> bool;
+  auto operator>(const species &s) const -> bool;
 
   /** Print name in XML format. */
-  friend std::ostream &operator<<(std::ostream &os, const species &s);
+  friend auto operator<<(std::ostream &os, const species &s) -> std::ostream&;
 };
 
 }

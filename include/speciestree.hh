@@ -12,18 +12,10 @@ namespace wagner {
 
 /** An object to store species and their phylogeny. */
 class speciestree {
-private:
-  // Root:
-  tbranch *m_root;
-
-  // The tips of the tree (the extant species):
-  std::set<species *> m_tips;
-
-  // Start date of the tree:
-  unsigned int m_start_date;
-
-  // Counter to name species:
-  unsigned int m_id_count;
+  tbranch* m_root;              // Root
+  std::set<species*> m_tips;    // The tips of the tree (the extant species).
+  size_t m_start_date;          // Start date of the tree.
+  size_t m_id_count;            // Counter to name species.
 
 public:
   /** Basic constructor. Creates a species and place it at the root. */
@@ -33,28 +25,28 @@ public:
   ~speciestree();
 
   /** Number of species in the tree. */
-  unsigned int num_species();
+  auto num_species() -> size_t;
 
   /** Remove extinct species. */
-  std::set<species *> rmv_extinct(unsigned int date);
+  auto rmv_extinct(size_t date) -> std::set<species*>;
 
   /** Speciate. */
-  species *speciate(species *parent, unsigned int date);
+  auto speciate(species *parent, size_t date) -> species*;
 
   /** Set the date for extant species. */
-  void stop(unsigned int date);
+  auto stop(size_t date) -> void;
 
   /** Return the tree in Newick format. */
-  std::string newick() const;
+  auto newick() const -> std::string;
 
   // Iterate the tips of the tree (the extant species):
-  std::set<species *>::iterator begin();
-  std::set<species *>::iterator end();
-  std::set<species *>::const_iterator begin() const;
-  std::set<species *>::const_iterator end() const;
+  auto begin() -> std::set<species*>::iterator;
+  auto end() -> std::set<species*>::iterator;
+  auto begin() const -> std::set<species*>::const_iterator;
+  auto end() const -> std::set<species*>::const_iterator;
 
   /** Return the tree in Newick format. */
-  friend std::ostream &operator<<(std::ostream &os, const speciestree &t);
+  friend auto operator<<(std::ostream &os, const speciestree &t) -> std::ostream&;
 };
 
 }

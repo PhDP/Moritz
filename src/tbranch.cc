@@ -53,15 +53,15 @@ bool tbranch::leaf() const {
   return m_left == nullptr; // Assumes the node is strictly binary.
 }
 
-unsigned int tbranch::end_date() const {
+size_t tbranch::end_date() const {
   return m_end_date;
 }
 
-void tbranch::set_end_date(unsigned int date) {
+void tbranch::set_end_date(size_t date) {
   m_end_date = date;
 }
 
-unsigned int tbranch::max_end_date() const {
+size_t tbranch::max_end_date() const {
   if (leaf()) {
     return m_end_date;
   } else {
@@ -71,23 +71,23 @@ unsigned int tbranch::max_end_date() const {
   }
 }
 
-unsigned int tbranch::parent_distance() const {
+size_t tbranch::parent_distance() const {
   return (m_parent == nullptr) ? 0 : m_end_date - m_parent->end_date();
 }
 
-unsigned int tbranch::total_distance() const {
+size_t tbranch::total_distance() const {
   return (m_parent == nullptr) ? 0 : parent_distance() + m_parent->total_distance();
 }
 
-unsigned int tbranch::nodes() const {
+size_t tbranch::nodes() const {
   return (m_parent == nullptr) ? 0 : 1 + m_parent->nodes();
 }
 
-unsigned int tbranch::edges() const {
+size_t tbranch::edges() const {
   return (m_left == nullptr) ? 0 : 2 + m_left->edges() + m_right->edges();
 }
 
-unsigned int tbranch::leaves() const {
+size_t tbranch::leaves() const {
   return 1 + edges() / 2;
 }
 
@@ -102,7 +102,7 @@ bool tbranch::strictly_binary() const {
   }
 }
 
-unsigned int tbranch::level() const {
+size_t tbranch::level() const {
   return leaf() ? 0 : 1 + max2(m_left->level(), m_right->level());
 }
 

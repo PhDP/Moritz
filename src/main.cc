@@ -32,11 +32,11 @@ using namespace std;
 using namespace wagner;
 
 int main(int argc, char *argv[]) {
-  unsigned int model = wagner_aleph;
-  // unsigned int x = 1; // number of threads
-  unsigned int seed = 42;
-  unsigned int t_max = (1 << 9);
-  unsigned int communities = 64;
+  size_t model = wagner_aleph;
+  // size_t x = 1; // number of threads
+  size_t seed = 42;
+  size_t t_max = (1 << 9);
+  size_t communities = 64;
   double ext_max = 0.05;
   double mig_max = 0.04;
   double aleph = 10.0;
@@ -94,23 +94,23 @@ int main(int argc, char *argv[]) {
 
   // Force 't_max' to be a power of two:
   if (!power_of_two(t_max)) {
-    unsigned int new_t = 1;
+    size_t new_t = 1;
     while (new_t < t_max) {
       new_t <<= 1;
     }
     t_max = (new_t >> 1);
   }
 
-  vector<unsigned int> speciation_per_t;
-  vector<unsigned int> ext_per_t;
-  vector<unsigned int> species_per_t;
+  vector<size_t> speciation_per_t;
+  vector<size_t> ext_per_t;
+  vector<size_t> species_per_t;
 
   mt19937_64 rng(seed); // The engine
   uniform_real_distribution<> unif;
 
   char buffer[50]; // Yep, for good old C methods :P
 
-  unsigned int trials = 0; // Attempts to build the spatial networks.
+  size_t trials = 0; // Attempts to build the spatial networks.
   network<point> landscape;
   do {
     if (++trials > 100000) {
@@ -121,12 +121,12 @@ int main(int argc, char *argv[]) {
     landscape.rgg(communities, radius, rng);
   } while (!landscape.connected());
 
-  sprintf(buffer, "w-network-%u.graphml", seed);
+  sprintf(buffer, "w-network-%lu.graphml", seed);
   ofstream out_net(buffer);
   out_net << landscape;
   out_net.close();
 
-  sprintf(buffer, "w-%u.xml", seed);
+  sprintf(buffer, "w-%lu.xml", seed);
   ofstream out_info(buffer);
   out_info << "<wagner>\n";
   out_info << "   <version>" << wagner_version << "</version>\n";
@@ -157,17 +157,17 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  unsigned int n_pops = landscape.order();
+  size_t n_pops = landscape.order();
 
   ////////////////////////////////
   //        SIMULATIONS         //
   ////////////////////////////////
-  unsigned int t = 0;
+  size_t t = 0;
   for (; t <= t_max && n_pops != 0; ++t) {
     // Shuffle all populations:
     if (shuffle && t == t_max / 2) {
       for (auto s0 : tree) {
-        unsigned int pops0 = s0->size();
+        size_t pops0 = s0->size();
         set<point> locations = s0->get_locations();
         for (auto loc : locations) {
           const point p = landscape.random_vertex(rng);
@@ -215,11 +215,11 @@ int main(int argc, char *argv[]) {
     // EXTINCTION //
     ////////////////
     binomial_distribution<> binom(n_pops, ext_max);
-    unsigned int extinctions = binom(rng);
+    size_t extinctions = binom(rng);
 
     while (extinctions > 0) {
-      unsigned int i = (unsigned int)(unif(rng) * n_pops);
-      unsigned int j = 0;
+      size_t i = (size_t)(unif(rng) * n_pops);
+      size_t j = 0;
       species *species_to_die = nullptr;
       for (auto s0 : tree) {
         j += s0->size();
@@ -229,7 +229,7 @@ int main(int argc, char *argv[]) {
         }
       }
       assert(species_to_die != nullptr);
-      i = (unsigned int)(unif(rng) * species_to_die->size());
+      i = (size_t)(unif(rng) * species_to_die->size());
       j = 0;
 
       set<point> locations = species_to_die->get_locations();
@@ -248,11 +248,11 @@ int main(int argc, char *argv[]) {
     ////////////////
     // SPECIATION //
     ////////////////
-    unsigned int n_groups = 0;
+    size_t n_groups = 0;
     for (auto s0 : tree) {
       n_groups += s0->up_groups(landscape);
     }
-    unsigned int speciation_events = 0;
+    size_t speciation_events = 0;
     if (n_groups > 0) {
       const double rate =
           has_log
@@ -265,8 +265,8 @@ int main(int argc, char *argv[]) {
     speciation_per_t.push_back(speciation_events);
     while (speciation_events > 0) {
       // Select species.
-      unsigned int i = (unsigned int)(unif(rng) * n_groups);
-      unsigned int j = 0;
+      size_t i = (size_t)(unif(rng) * n_groups);
+      size_t j = 0;
       species *to_speciate = nullptr;
       for (auto s0 : tree) {
         j += s0->num_groups();
@@ -276,7 +276,7 @@ int main(int argc, char *argv[]) {
         }
       }
       assert(to_speciate != nullptr);
-      i = (unsigned int)(unif(rng) * to_speciate->num_groups());
+      i = (size_t)(unif(rng) * to_speciate->num_groups());
 
       // Speciate and get the new species:
       species *new_species = tree.speciate(to_speciate, t);
@@ -297,7 +297,7 @@ int main(int argc, char *argv[]) {
       tree.stop(t);
       out_info << "   <newick><t>" << t << "</t>" << tree.newick()
                << "</newick>\n";
-      sprintf(buffer, "w-species-%u-t%u.xml", seed, t);
+      sprintf(buffer, "w-species-%lu-t%lu.xml", seed, t);
       ofstream out_res(buffer);
       out_res << "<extant_species>\n";
       out_res << "  <t>" << t << "</t>\n";
@@ -310,15 +310,15 @@ int main(int argc, char *argv[]) {
   } // end simulation
 
   out_info << "   <speciation_per_t> ";
-  for (unsigned int i : speciation_per_t) {
+  for (size_t i : speciation_per_t) {
     out_info << i << ' ';
   }
   out_info << "</speciation_per_t>\n   <extinctions_per_t> ";
-  for (unsigned int i : ext_per_t) {
+  for (size_t i : ext_per_t) {
     out_info << i << ' ';
   }
   out_info << "</extinctions_per_t>\n   <species_per_t> ";
-  for (unsigned int i : species_per_t) {
+  for (size_t i : species_per_t) {
     out_info << i << ' ';
   }
   out_info << "</species_per_t>\n";

@@ -12,7 +12,7 @@
 
 namespace wagner {
 
-species::species(unsigned int i) : tbranch(nullptr, nullptr, nullptr), id(i) {
+species::species(size_t i) : tbranch(nullptr, nullptr, nullptr), id(i) {
   //
 }
 
@@ -20,11 +20,11 @@ species::~species() {
   //
 }
 
-unsigned int species::size() const {
+size_t species::size() const {
   return m_locations.size();
 }
 
-unsigned int species::num_groups() const {
+size_t species::num_groups() const {
   return m_groups;
 }
 
@@ -59,8 +59,8 @@ std::set<point> species::get_locations() const {
   return l;
 }
 
-unsigned int species::up_groups(network<point> &n) {
-  unsigned int ngr = 0;
+size_t species::up_groups(network<point> &n) {
+  size_t ngr = 0;
   for (auto i : m_locations) {
     m_locations[i.first] = -1;
   }
@@ -99,14 +99,14 @@ void species::rmv_from(const point &p) {
   m_locations.erase(p);
 }
 
-unsigned int species::num_differences(const species &s) const {
-  unsigned int delta = 0;
+size_t species::num_differences(const species &s) const {
+  size_t delta = 0;
   for (int i = 0; i < m_traits.size(); ++i)
     delta += m_traits[i] != s.m_traits[i];
   return delta;
 }
 
-bool species::same_traits_as(const species &s) const { 
+bool species::same_traits_as(const species &s) const {
   for (int i = 0; i < m_traits.size(); ++i) {
     if (m_traits[i] != s.m_traits[i]) {
       return false;
@@ -115,7 +115,7 @@ bool species::same_traits_as(const species &s) const {
   return true;
 }
 
-unsigned int species::get_mrca(const species &s) const {
+size_t species::get_mrca(const species &s) const {
   tbranch *p = parent();
   std::set<tbranch *> parents;
   while (p != nullptr) {
@@ -130,7 +130,7 @@ unsigned int species::get_mrca(const species &s) const {
   return p->end_date();
 }
 
-unsigned int species::get_mrca(const std::set<tbranch *> &ps) const {
+size_t species::get_mrca(const std::set<tbranch *> &ps) const {
   tbranch *p = parent();
   assert(p != nullptr && ps.size() > 0);
   while (ps.find(p) == ps.end()) {
@@ -179,7 +179,7 @@ std::string species::newick() const {
   return o.str();
 }
 
-std::string species::get_info(unsigned int time) const {
+std::string species::get_info(size_t time) const {
   std::ostringstream oss;
   oss << "<species> <id>" << id << "</id> <centroid>"
       << centroid(get_locations()) << "</centroid> <locations>";

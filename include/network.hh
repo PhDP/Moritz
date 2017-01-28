@@ -10,15 +10,12 @@
 
 namespace wagner {
 
-template <typename T> class network {
-private:
-  // The actual network:
+template<typename T>
+class network {
   std::map<T, std::set<T>> m_net;
-
-  // Private function to test connectivity.
   void m_test_connectivity(std::map<T, bool> &vs, const T &t);
 
-public:
+ public:
   /** Basic constructor. */
   network();
 
@@ -26,78 +23,83 @@ public:
   ~network();
 
   /** Number of edges in the entire network. */
-  unsigned int size() const;
+  auto size() const -> size_t;
 
   /** Number of edges in node t. */
-  unsigned int size(const T &t) const;
+  auto size(const T &t) const -> size_t;
 
   /** Number or vertices. */
-  unsigned int order() const;
+  auto order() const -> size_t;
 
   /** Destroy all vertices and create a random geometric graph. */
-  void rgg(unsigned int order, double radius, std::mt19937_64 &rng);
+  auto rgg(size_t order, double radius, std::mt19937_64 &rng) -> void;
 
   /** Return true if the network is strongly connected. */
-  bool connected();
+  auto connected() -> bool;
 
   /** Return one vertex of the graph at random. */
-  T random_vertex(std::mt19937_64 &rng);
+  auto random_vertex(std::mt19937_64 &rng) -> T;
 
   /** Return true if the vertex is present. */
-  bool has_vertex(const T &t) const;
+  auto has_vertex(const T &t) const -> bool;
 
   /** Return true if an edge is present between v0 and v1. */
-  bool has_edge(const T &t0, const T &t1);
+  auto has_edge(const T &t0, const T &t1) -> bool;
 
   /** Add a vertex. */
-  bool add_vertex(const T &t);
+  auto add_vertex(const T &t) -> bool;
 
   /** Add an edge between vertices v0 and v1. */
-  unsigned int add_edge(const T &t0, const T &t1);
+  auto add_edge(const T &t0, const T &t1) -> size_t;
 
   /** Add an edge between vertives v0 and v1 and betwen v1 and v0. Return the
    * number of edges added. */
-  unsigned int add_edges(const T &t0, const T &t1);
+  auto add_edges(const T &t0, const T &t1) -> size_t;
 
   /** Return the set of neighbors for vertex 'v'. */
-  std::set<T> neighbors(const T &t);
+  auto neighbors(const T &t) -> std::set<T>;
 
   /** Return the set of neighbors for vertex 'v'. */
-  std::set<T> operator[](const T &t);
+  auto operator[](const T &t) -> std::set<T>;
 
   // Iterate the network:
-  typename std::map<T, std::set<T>>::iterator begin();
-  typename std::map<T, std::set<T>>::iterator end();
-  typename std::map<T, std::set<T>>::const_iterator begin() const;
-  typename std::map<T, std::set<T>>::const_iterator end() const;
+  auto begin() -> typename std::map<T, std::set<T>>::iterator;
+  auto end() -> typename std::map<T, std::set<T>>::iterator;
+  auto begin() const -> typename std::map<T, std::set<T>>::const_iterator;
+  auto end() const -> typename std::map<T, std::set<T>>::const_iterator;
 };
 
-template <typename T> network<T>::network() {
+template<typename T>
+network<T>::network() {
   //
 }
 
-template <typename T> network<T>::~network() {
+template<typename T>
+network<T>::~network() {
   //
 }
 
-template <typename T> unsigned int network<T>::size() const {
-  unsigned int sum = 0;
+template<typename T>
+auto network<T>::size() const -> size_t {
+  size_t sum = 0;
   for (auto i : m_net) {
     sum += i.second.size();
   }
   return sum;
 }
 
-template <typename T> unsigned int network<T>::size(const T &t) const {
+template<typename T>
+auto network<T>::size(const T &t) const -> size_t {
   return m_net[t].size();
 }
 
-template <typename T> unsigned int network<T>::order() const {
+template<typename T>
+auto network<T>::order() const -> size_t {
   return m_net.size();
 }
 
 template <typename T>
-void network<T>::m_test_connectivity(std::map<T, bool> &vs, const T &v) {
+auto network<T>::m_test_connectivity(std::map<T, bool> &vs, const T &v) -> void {
   std::set<T> ns = neighbors(v);
   for (auto i : ns) {
     if (vs[i] == false) {
@@ -107,7 +109,8 @@ void network<T>::m_test_connectivity(std::map<T, bool> &vs, const T &v) {
   }
 }
 
-template <typename T> bool network<T>::connected() {
+template<typename T>
+auto network<T>::connected() -> bool {
   for (auto i : m_net) {
     std::map<T, bool> is;
     for (auto j : m_net) {
@@ -124,10 +127,11 @@ template <typename T> bool network<T>::connected() {
   return true;
 }
 
-template <typename T> T network<T>::random_vertex(std::mt19937_64 &rng) {
+template<typename T>
+auto network<T>::random_vertex(std::mt19937_64 &rng) -> T {
   std::uniform_int_distribution<> unif(0, m_net.size());
-  const unsigned int v = unif(rng);
-  unsigned int index = 0;
+  const size_t v = unif(rng);
+  size_t index = 0;
   for (auto i : m_net) {
     if (v == index++) {
       return i.first;
@@ -137,7 +141,7 @@ template <typename T> T network<T>::random_vertex(std::mt19937_64 &rng) {
 }
 
 template <typename T>
-void network<T>::rgg(unsigned int order, double radius, std::mt19937_64 &rng) {
+auto network<T>::rgg(size_t order, double radius, std::mt19937_64 &rng) -> void {
   std::uniform_real_distribution<> unif;
   m_net.clear();
   for (int i = 0; i < order; ++i) {
@@ -154,11 +158,13 @@ void network<T>::rgg(unsigned int order, double radius, std::mt19937_64 &rng) {
   }
 }
 
-template <typename T> bool network<T>::has_vertex(const T &t) const {
+template<typename T>
+auto network<T>::has_vertex(const T &t) const -> bool {
   return m_net.find(t) != m_net.end();
 }
 
-template <typename T> bool network<T>::has_edge(const T &t0, const T &t1) {
+template<typename T>
+auto network<T>::has_edge(const T &t0, const T &t1) -> bool {
   if (has_vertex(t0) && has_vertex(t1)) {
     return (m_net[t0].find(t1) != m_net[t0].end());
   } else {
@@ -166,7 +172,8 @@ template <typename T> bool network<T>::has_edge(const T &t0, const T &t1) {
   }
 }
 
-template <typename T> bool network<T>::add_vertex(const T &t) {
+template<typename T>
+auto network<T>::add_vertex(const T &t) -> bool {
   if (has_vertex(t)) {
     return false;
   } else {
@@ -177,7 +184,7 @@ template <typename T> bool network<T>::add_vertex(const T &t) {
 }
 
 template <typename T>
-unsigned int network<T>::add_edge(const T &t0, const T &t1) {
+auto network<T>::add_edge(const T &t0, const T &t1) -> size_t {
   if (has_vertex(t0)) {
     if (has_edge(t0, t1)) {
       return 0;
@@ -190,41 +197,43 @@ unsigned int network<T>::add_edge(const T &t0, const T &t1) {
   }
 }
 
-template <typename T>
-unsigned int network<T>::add_edges(const T &t0, const T &t1) {
+template<typename T>
+auto network<T>::add_edges(const T &t0, const T &t1) -> size_t {
   return add_edge(t0, t1) + add_edge(t1, t0);
 }
 
-template <typename T> std::set<T> network<T>::neighbors(const T &t) {
+template<typename T>
+auto network<T>::neighbors(const T &t) -> std::set<T> {
   return m_net[t];
 }
 
-template <typename T> std::set<T> network<T>::operator[](const T &t) {
+template<typename T>
+auto network<T>::operator[](const T &t) -> std::set<T> {
   return m_net[t];
 }
 
-template <typename T>
-typename std::map<T, std::set<T>>::iterator network<T>::begin() {
+template<typename T>
+auto network<T>::begin() -> typename std::map<T, std::set<T>>::iterator {
   return m_net.begin();
 }
 
-template <typename T>
-typename std::map<T, std::set<T>>::iterator network<T>::end() {
+template<typename T>
+auto network<T>::end() -> typename std::map<T, std::set<T>>::iterator {
   return m_net.end();
 }
 
-template <typename T>
-typename std::map<T, std::set<T>>::const_iterator network<T>::begin() const {
+template<typename T>
+auto network<T>::begin() const -> typename std::map<T, std::set<T>>::const_iterator {
   return m_net.begin();
 }
 
-template <typename T>
-typename std::map<T, std::set<T>>::const_iterator network<T>::end() const {
+template<typename T>
+auto network<T>::end() const -> typename std::map<T, std::set<T>>::const_iterator{
   return m_net.end();
 }
 
-template <typename T>
-std::ostream &operator<<(std::ostream &os, const network<T> &net) {
+template<typename T>
+auto operator<<(std::ostream &os, const network<T> &net) -> std::ostream& {
   os << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
   os << "<graphml xmlns=\"http://graphml.graphdrawing.org/xmlns\"";
   os << " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"";
