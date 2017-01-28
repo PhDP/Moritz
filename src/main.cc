@@ -34,7 +34,7 @@ using namespace wagner;
 int main(int argc, char *argv[]) {
   unsigned int model = wagner_aleph;
   // unsigned int x = 1; // number of threads
-  unsigned int seed = 6;
+  unsigned int seed = 42;
   unsigned int t_max = (1 << 9);
   unsigned int communities = 64;
   double ext_max = 0.05;
