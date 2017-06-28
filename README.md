@@ -78,7 +78,7 @@ the largest power of two that fits in this number.
 
 license
 -------
-MIT <http://opensource.org/licenses/MIT>
+[MIT](https://github.com/PhDP/wagner/blob/master/LICENSE) <http://opensource.org/licenses/MIT>
 
 author
 ------
