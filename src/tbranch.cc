@@ -2,8 +2,8 @@
 #include <sstream>
 #include <ostream>
 #include <string>
-#include "common.hh"
-#include "tbranch.hh"
+#include "wagner/common.hh"
+#include "wagner/tbranch.hh"
 
 namespace wagner {
 

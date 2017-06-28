@@ -1,5 +1,5 @@
-#ifndef WAGNER_POINT_H_
-#define WAGNER_POINT_H_
+#ifndef WAGNER_POINT_HH_
+#define WAGNER_POINT_HH_
 
 #include <iostream>
 #include <cmath>

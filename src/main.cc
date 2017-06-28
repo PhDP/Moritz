@@ -12,21 +12,24 @@
 #include <cstring>
 #include <cassert>
 
-#include "common.hh"
-#include "speciestree.hh"
-#include "point.hh"
-#include "species.hh"
-#include "network.hh"
+#include "wagner/common.hh"
+#include "wagner/speciestree.hh"
+#include "wagner/point.hh"
+#include "wagner/species.hh"
+#include "wagner/network.hh"
 
 // Version:
-#define wagner_version 1
+#define wagner_version  2
 #define wagner_revision 1
 
 // Models:
-#define wagner_neutral 0
-#define wagner_aleph 1
-#define wagner_logistic 2
-#define wagner_log_aleph 3
+enum model {
+  wagner_neutral = 0,
+  wagner_aleph = 1,
+  wagner_logistic = 2,
+  wagner_log_aleph = 3,
+  wagner_traits = 4
+};
 
 using namespace std;
 using namespace wagner;
@@ -37,6 +40,7 @@ int main(int argc, char *argv[]) {
   size_t seed = 42;
   size_t t_max = (1 << 9);
   size_t communities = 64;
+  size_t traits = 10;
   double ext_max = 0.05;
   double mig_max = 0.04;
   double aleph = 10.0;
@@ -50,6 +54,8 @@ int main(int argc, char *argv[]) {
   for (int i = 1; i < argc; ++i) {
     if (strcmp(argv[i], "-seed") == 0) {
       seed = atoi(argv[i + 1]);
+    } else if (strcmp(argv[i], "-n") == 0) {
+      traits = atoi(argv[i + 1]);
     } else if (strcmp(argv[i], "-c") == 0) {
       communities = atoi(argv[i + 1]);
     } else if (strcmp(argv[i], "-t") == 0) {
@@ -80,8 +86,7 @@ int main(int argc, char *argv[]) {
 
   string model_str;
   const bool has_aleph = (model == wagner_aleph) || (model == wagner_log_aleph);
-  const bool has_log =
-      (model == wagner_logistic) || (model == wagner_log_aleph);
+  const bool has_log = (model == wagner_logistic) || (model == wagner_log_aleph);
   if (model == wagner_neutral) {
     model_str = "neutral";
   } else if (model == wagner_aleph) {
@@ -90,6 +95,8 @@ int main(int argc, char *argv[]) {
     model_str = "logistic";
   } else if (model == wagner_log_aleph) {
     model_str = "log_aleph";
+  } else {
+    model_str = "with_traits";
   }
 
   // Force 't_max' to be a power of two:

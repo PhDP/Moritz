@@ -2,11 +2,11 @@
 #include <string>
 #include <set>
 #include <list>
-#include "common.hh"
-#include "speciestree.hh"
-#include "tbranch.hh"
-#include "species.hh"
-#include "point.hh"
+#include "wagner/common.hh"
+#include "wagner/speciestree.hh"
+#include "wagner/tbranch.hh"
+#include "wagner/species.hh"
+#include "wagner/point.hh"
 
 namespace wagner {
 

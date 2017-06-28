@@ -5,7 +5,7 @@
 #include <sstream>
 #include <ostream>
 #include <string>
-#include "common.hh"
+#include "wagner/common.hh"
 
 namespace wagner {
 

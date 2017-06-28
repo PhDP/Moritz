@@ -14,9 +14,15 @@ Working paper: http://arxiv.org/abs/1203.1790
 
 usage and options
 -----------------
-Compile with make (requires a modern ANSI C++11 compiler) and execute with
+Compile with make (requires a modern ANSI C++14 compiler), e.g.:
 
-    $ ./wagner
+    $ mkdir build && cd $_
+    $ cmake ..
+    $ make
+
+ and execute with
+
+    $ ./src/wagner_exe
 
 You can change the model with:
 
@@ -28,6 +34,7 @@ The current version supports four models:
     1   Model with aleph (see arXiv paper) [default]
     2   Model with logistic speciation (decreases with the total number of species).
     3   Model with both aleph and logistic speciation.
+    4   Model with traits (set option n for the number of traits)
 
 You can also use the following options [default values]:
 
@@ -36,6 +43,7 @@ You can also use the following options [default values]:
     -t          Number of time steps. Needs to be a power of two [512].
     -e          Per population extinction rate [0.05].
     -m          Max migration rate [0.04].
+    -n          Number of traits [10].
     -a          Aleph for models 1 and 3 [10.0].
     -s          Speciation rate (or max speciation rate for logistic models) [0.04].
     -se         With logistic speciation and n species, the speciation rate is 2s/(1 + se^n) [1.02].

@@ -12,7 +12,7 @@ namespace wagner {
 
 template<typename T>
 class network {
-  std::map<T, std::set<T>> m_net;
+  std::map<T, std::set<T>> m_net; // replace with boost's flat containers
   void m_test_connectivity(std::map<T, bool> &vs, const T &t);
 
  public:

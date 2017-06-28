@@ -5,10 +5,10 @@
 #include <map>
 #include <set>
 #include <cassert>
-#include "tbranch.hh"
-#include "network.hh"
-#include "species.hh"
-#include "point.hh"
+#include "wagner/tbranch.hh"
+#include "wagner/network.hh"
+#include "wagner/species.hh"
+#include "wagner/point.hh"
 
 namespace wagner {
 

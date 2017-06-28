@@ -1,7 +1,7 @@
 #include <iostream>
 #include <sstream>
 #include <cmath>
-#include "point.hh"
+#include "wagner/point.hh"
 
 namespace wagner {
 

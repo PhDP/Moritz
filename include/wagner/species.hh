@@ -4,14 +4,17 @@
 #include <iostream>
 #include <set>
 #include <vector>
-#include "tbranch.hh"
-#include "network.hh"
-#include "point.hh"
+#include "wagner/tbranch.hh"
+#include "wagner/network.hh"
+#include "wagner/point.hh"
 
 namespace wagner {
 
 /** Species as the leaf of a phylogenetic tree. */
+
+//template<size_t dim = 0>
 class species : public tbranch {
+  //std::array<double, dim> m_traits;
   std::vector<bool> m_traits;
   std::map<point, int> m_locations; // Location/group map:
   void m_grouping(const point &p, int gid, network<point> &n); // Recursive function used to establish the groups:
