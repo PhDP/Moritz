@@ -27,7 +27,16 @@ class species : public tbranch {
   /** Basic constructor. */
   species(size_t i, size_t ntraits = 0);
 
-//  species(size_t i, std::vector<float> const& starting_traits);
+  /** Creates a species with a starting set of traits. */
+  species(size_t i, std::vector<float> const& starting_traits);
+
+  auto begin() const -> std::vector<float>::const_iterator {
+    return m_traits.begin();
+  }
+
+  auto end() const -> std::vector<float>::const_iterator {
+    return m_traits.end();
+  }
 
   /** Return true if extinct. */
   auto extinct() const -> bool;

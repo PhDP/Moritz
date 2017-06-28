@@ -1,16 +1,26 @@
 Wagner
 ======
+![badge.cpp](https://img.shields.io/badge/c++-14-008080.svg?style=flat-square)
+[![license][badge.license]][license]
+[badge.license]: https://img.shields.io/badge/License-MIT%202.0-7ec0ee.svg
+[license]: https://github.com/PhDP/wagner/blob/master/LICENSE
+
 A theoretical model to study macroevolution and phylogeographies.
 
 Named after Moritz Wagner (1813-1887), who made important contributions to our
 understanding of speciation.
 
-The program is written in ANSI C++11. Tested on Linux 64-bit with clang++ 3.0
-and g++ 4.7.0.
+The program is written in C++14. Tested on Linux 64-bit with clang++ 4.0
+and g++ 6.3.0.
 
 reference
 ---------
 Working paper: http://arxiv.org/abs/1203.1790
+
+dependencies
+------------
+* [boost](http://www.boost.org/)
+* [cmake](https://cmake.org/) for building
 
 usage and options
 -----------------
@@ -63,11 +73,6 @@ doesn't matter and all parameters should be printed in the xml output file. If
 the number of time steps supplied is not a power of two, the problem will find
 the largest power of two that fits in this number.
 
-language
---------
-ANSI C++11.
-
-I use many features from the C++11 standard so it requires a modern compiler.
 
 license
 -------
