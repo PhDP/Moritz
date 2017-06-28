@@ -31,9 +31,6 @@ enum model {
   wagner_traits = 4
 };
 
-using namespace std;
-using namespace wagner;
-
 int main(int argc, char *argv[]) {
   size_t model = wagner_aleph;
   // size_t x = 1; // number of threads
@@ -52,39 +49,39 @@ int main(int argc, char *argv[]) {
   bool discard = false;
 
   for (int i = 1; i < argc; ++i) {
-    if (strcmp(argv[i], "-seed") == 0) {
+    if (std::strcmp(argv[i], "-seed") == 0) {
       seed = atoi(argv[i + 1]);
-    } else if (strcmp(argv[i], "-n") == 0) {
+    } else if (std::strcmp(argv[i], "-n") == 0) {
       traits = atoi(argv[i + 1]);
-    } else if (strcmp(argv[i], "-c") == 0) {
+    } else if (std::strcmp(argv[i], "-c") == 0) {
       communities = atoi(argv[i + 1]);
-    } else if (strcmp(argv[i], "-t") == 0) {
+    } else if (std::strcmp(argv[i], "-t") == 0) {
       t_max = atoi(argv[i + 1]);
-    } else if (strcmp(argv[i], "-e") == 0) {
-      ext_max = atof(argv[i + 1]);
-    } else if (strcmp(argv[i], "-model") == 0) {
+    } else if (std::strcmp(argv[i], "-e") == 0) {
+      ext_max = std::atof(argv[i + 1]);
+    } else if (std::strcmp(argv[i], "-model") == 0) {
       model = atoi(argv[i + 1]);
-    } else if (strcmp(argv[i], "-m") == 0) {
-      mig_max = atof(argv[i + 1]);
-    } else if (strcmp(argv[i], "-a") == 0) {
-      aleph = atof(argv[i + 1]);
-    } else if (strcmp(argv[i], "-s") == 0) {
-      speciation = atof(argv[i + 1]);
-    } else if (strcmp(argv[i], "-se") == 0) {
-      speciation_exp = atof(argv[i + 1]);
-    } else if (strcmp(argv[i], "-r") == 0) {
-      radius = atof(argv[i + 1]);
-    } else if (strcmp(argv[i], "-verbose") == 0) {
+    } else if (std::strcmp(argv[i], "-m") == 0) {
+      mig_max = std::atof(argv[i + 1]);
+    } else if (std::strcmp(argv[i], "-a") == 0) {
+      aleph = std::atof(argv[i + 1]);
+    } else if (std::strcmp(argv[i], "-s") == 0) {
+      speciation = std::atof(argv[i + 1]);
+    } else if (std::strcmp(argv[i], "-se") == 0) {
+      speciation_exp = std::atof(argv[i + 1]);
+    } else if (std::strcmp(argv[i], "-r") == 0) {
+      radius = std::atof(argv[i + 1]);
+    } else if (std::strcmp(argv[i], "-verbose") == 0) {
       verbose = true;
-    } else if (strcmp(argv[i], "-shuffle") == 0) {
+    } else if (std::strcmp(argv[i], "-shuffle") == 0) {
       shuffle = true;
-    } else if (strcmp(argv[i], "-discard") == 0) {
+    } else if (std::strcmp(argv[i], "-discard") == 0) {
       discard = true;
       ;
     }
   }
 
-  string model_str;
+  std::string model_str;
   const bool has_aleph = (model == wagner_aleph) || (model == wagner_log_aleph);
   const bool has_log = (model == wagner_logistic) || (model == wagner_log_aleph);
   if (model == wagner_neutral) {
@@ -108,33 +105,32 @@ int main(int argc, char *argv[]) {
     t_max = (new_t >> 1);
   }
 
-  vector<size_t> speciation_per_t;
-  vector<size_t> ext_per_t;
-  vector<size_t> species_per_t;
+  std::vector<size_t> speciation_per_t;
+  std::vector<size_t> ext_per_t;
+  std::vector<size_t> species_per_t;
 
-  mt19937_64 rng(seed); // The engine
-  uniform_real_distribution<> unif;
+  std::mt19937_64 rng(seed); // The engine
+  std::uniform_real_distribution<> unif;
 
   char buffer[50]; // Yep, for good old C methods :P
 
   size_t trials = 0; // Attempts to build the spatial networks.
-  network<point> landscape;
+  wagner::network<wagner::point> landscape;
   do {
     if (++trials > 100000) {
-      cout << "Terminating after 100 000 attempts were made to generate the "
-              "spatial network.\n";
+      std::cout << "Terminating after 100 000 attempts were made to generate the spatial network.\n";
       return 0;
     }
     landscape.rgg(communities, radius, rng);
   } while (!landscape.connected());
 
-  sprintf(buffer, "w-network-%lu.graphml", seed);
-  ofstream out_net(buffer);
+  std::sprintf(buffer, "w-network-%lu.graphml", seed);
+  std::ofstream out_net(buffer);
   out_net << landscape;
   out_net.close();
 
-  sprintf(buffer, "w-%lu.xml", seed);
-  ofstream out_info(buffer);
+  std::sprintf(buffer, "w-%lu.xml", seed);
+  std::ofstream out_info(buffer);
   out_info << "<wagner>\n";
   out_info << "   <version>" << wagner_version << "</version>\n";
   out_info << "   <revision>" << wagner_revision << "</revision>\n";
@@ -157,7 +153,7 @@ int main(int argc, char *argv[]) {
   out_info << "   <extinction>" << ext_max << "</extinction>\n";
 
   // Where the species are stored:
-  speciestree tree;
+  wagner::speciestree tree;
   for (auto sp : tree) {
     for (auto p : landscape) {
       sp->add_to(p.first);
@@ -175,9 +171,9 @@ int main(int argc, char *argv[]) {
     if (shuffle && t == t_max / 2) {
       for (auto s0 : tree) {
         size_t pops0 = s0->size();
-        boost::container::flat_set<point> locations = s0->get_locations();
+        boost::container::flat_set<wagner::point> locations = s0->get_locations();
         for (auto loc : locations) {
-          const point p = landscape.random_vertex(rng);
+          const wagner::point p = landscape.random_vertex(rng);
           s0->rmv_from(loc);
           s0->add_to(p);
         }
@@ -191,9 +187,9 @@ int main(int argc, char *argv[]) {
     // MIGRATION  //
     ////////////////
     for (auto s0 : tree) {
-      boost::container::flat_set<point> locations = s0->get_locations();
+      boost::container::flat_set<wagner::point> locations = s0->get_locations();
       for (auto loc : locations) {
-        boost::container::flat_set<point> nei = landscape.neighbors(loc);
+        boost::container::flat_set<wagner::point> nei = landscape.neighbors(loc);
         for (auto j : nei) {
           if (locations.find(j) == locations.end()) {
             double mig = mig_max;
@@ -201,7 +197,7 @@ int main(int argc, char *argv[]) {
               double delta = 0.0;
               for (auto s1 : tree) {
                 if (s1 != s0) {
-                  boost::container::flat_set<point> locations2 = s1->get_locations();
+                  boost::container::flat_set<wagner::point> locations2 = s1->get_locations();
                   if (locations2.find(j) != locations2.end()) {
                     delta += 1.0 / (t - s0->get_mrca(*s1));
                   }
@@ -221,13 +217,13 @@ int main(int argc, char *argv[]) {
     ////////////////
     // EXTINCTION //
     ////////////////
-    binomial_distribution<> binom(n_pops, ext_max);
+    std::binomial_distribution<> binom(n_pops, ext_max);
     size_t extinctions = binom(rng);
 
     while (extinctions > 0) {
       size_t i = (size_t)(unif(rng) * n_pops);
       size_t j = 0;
-      species *species_to_die = nullptr;
+      wagner::species *species_to_die = nullptr;
       for (auto s0 : tree) {
         j += s0->size();
         if (i < j) {
@@ -239,7 +235,7 @@ int main(int argc, char *argv[]) {
       i = (size_t)(unif(rng) * species_to_die->size());
       j = 0;
 
-      boost::container::flat_set<point> locations = species_to_die->get_locations();
+      boost::container::flat_set<wagner::point> locations = species_to_die->get_locations();
       for (auto loc : locations) {
         if (i == j) {
           species_to_die->rmv_from(loc);
@@ -266,7 +262,7 @@ int main(int argc, char *argv[]) {
               ? (2.0 * speciation) /
                     (1 + pow(speciation_exp, tree.num_species()))
               : speciation;
-      binomial_distribution<> binom2(n_groups, rate);
+      std::binomial_distribution<> binom2(n_groups, rate);
       speciation_events = binom2(rng);
     }
     speciation_per_t.push_back(speciation_events);
@@ -274,7 +270,7 @@ int main(int argc, char *argv[]) {
       // Select species.
       size_t i = (size_t)(unif(rng) * n_groups);
       size_t j = 0;
-      species *to_speciate = nullptr;
+      wagner::species *to_speciate = nullptr;
       for (auto s0 : tree) {
         j += s0->num_groups();
         if (i < j) {
@@ -286,17 +282,17 @@ int main(int argc, char *argv[]) {
       i = (size_t)(unif(rng) * to_speciate->num_groups());
 
       // Speciate and get the new species:
-      species *new_species = tree.speciate(to_speciate, t);
+      wagner::species *new_species = tree.speciate(to_speciate, t);
 
       // Transfer populations:
-      boost::container::flat_set<point> to_transfer = to_speciate->pop_group(i);
+      boost::container::flat_set<wagner::point> to_transfer = to_speciate->pop_group(i);
       new_species->add_to(to_transfer);
       --speciation_events;
     }
 
     // Epilogue = remove extinct species from the most recent common ancestor
     // map:
-    boost::container::flat_set<species*> to_rmv = tree.rmv_extinct(t);
+    boost::container::flat_set<wagner::species*> to_rmv = tree.rmv_extinct(t);
     ext_per_t.push_back(to_rmv.size());
     species_per_t.push_back(tree.num_species());
 
@@ -304,30 +300,22 @@ int main(int argc, char *argv[]) {
       tree.stop(t);
       out_info << "   <newick><t>" << t << "</t>" << tree.newick()
                << "</newick>\n";
-      sprintf(buffer, "w-species-%lu-t%lu.xml", seed, t);
-      ofstream out_res(buffer);
+      std::sprintf(buffer, "w-species-%lu-t%lu.xml", seed, t);
+      std::ofstream out_res(buffer);
       out_res << "<extant_species>\n";
       out_res << "  <t>" << t << "</t>\n";
-      for (auto s0 : tree) {
-        out_res << "  " << s0->get_info(t) << '\n';
-      }
+      for (auto s0 : tree) out_res << "  " << s0->get_info(t) << '\n';
       out_res << "</extant_species>\n";
       out_res.close();
     }
   } // end simulation
 
   out_info << "   <speciation_per_t> ";
-  for (size_t i : speciation_per_t) {
-    out_info << i << ' ';
-  }
+  for (size_t i : speciation_per_t) out_info << i << ' ';
   out_info << "</speciation_per_t>\n   <extinctions_per_t> ";
-  for (size_t i : ext_per_t) {
-    out_info << i << ' ';
-  }
+  for (size_t i : ext_per_t) out_info << i << ' ';
   out_info << "</extinctions_per_t>\n   <species_per_t> ";
-  for (size_t i : species_per_t) {
-    out_info << i << ' ';
-  }
+  for (size_t i : species_per_t) out_info << i << ' ';
   out_info << "</species_per_t>\n";
   out_info << "</wagner>\n";
   out_info.close();
