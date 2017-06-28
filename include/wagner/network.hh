@@ -4,34 +4,38 @@
 #include <iostream>
 #include <cstdio>
 #include <string>
-#include <map>
-#include <set>
 #include <random>
-// #include <boost/container/flat_map.hpp>
-// #include <boost/container/flat_set.hpp>
+#include <boost/container/flat_map.hpp>
+#include <boost/container/flat_set.hpp>
 
 namespace wagner {
 
 template<typename T>
 class network {
-  std::map<T, std::set<T>> m_net; // replace with boost's flat containers
-  void m_test_connectivity(std::map<T, bool> &vs, const T &t);
+  boost::container::flat_map<T, boost::container::flat_set<T>> m_net;
+  void m_test_connectivity(boost::container::flat_map<T, bool> &vs, const T &t);
 
  public:
   /** Basic constructor. */
-  network();
-
-  /** Basic destructor. */
-  ~network();
+  network() noexcept {
+  }
 
   /** Number of edges in the entire network. */
-  auto size() const -> size_t;
+  auto size() const noexcept -> size_t {
+    size_t sum = 0;
+    for (auto i : m_net) sum += i.second.size();
+    return sum;
+  }
 
   /** Number of edges in node t. */
-  auto size(const T &t) const -> size_t;
+  auto size(const T &t) const noexcept -> size_t {
+    return m_net[t].size();
+  }
 
   /** Number or vertices. */
-  auto order() const -> size_t;
+  auto order() const noexcept -> size_t {
+    return m_net.size();
+  }
 
   /** Destroy all vertices and create a random geometric graph. */
   auto rgg(size_t order, double radius, std::mt19937_64 &rng) -> void;
@@ -40,7 +44,7 @@ class network {
   auto connected() -> bool;
 
   /** Return one vertex of the graph at random. */
-  auto random_vertex(std::mt19937_64 &rng) -> T;
+  auto random_vertex(std::mt19937_64 &rng) -> T; // What????
 
   /** Return true if the vertex is present. */
   auto has_vertex(const T &t) const -> bool;
@@ -59,50 +63,32 @@ class network {
   auto add_edges(const T &t0, const T &t1) -> size_t;
 
   /** Return the set of neighbors for vertex 'v'. */
-  auto neighbors(const T &t) -> std::set<T>;
+  auto neighbors(const T &t) -> boost::container::flat_set<T>;
 
   /** Return the set of neighbors for vertex 'v'. */
-  auto operator[](const T &t) -> std::set<T>;
+  auto operator[](const T &t) -> boost::container::flat_set<T>;
 
   // Iterate the network:
-  auto begin() -> typename std::map<T, std::set<T>>::iterator;
-  auto end() -> typename std::map<T, std::set<T>>::iterator;
-  auto begin() const -> typename std::map<T, std::set<T>>::const_iterator;
-  auto end() const -> typename std::map<T, std::set<T>>::const_iterator;
+  auto begin() noexcept -> typename boost::container::flat_map<T, boost::container::flat_set<T>>::iterator {
+    return m_net.begin();
+  }
+
+  auto end() noexcept -> typename boost::container::flat_map<T, boost::container::flat_set<T>>::iterator {
+    return m_net.end();
+  }
+
+  auto begin() const noexcept -> typename boost::container::flat_map<T, boost::container::flat_set<T>>::const_iterator {
+    return m_net.begin();
+  }
+
+  auto end() const noexcept -> typename boost::container::flat_map<T, boost::container::flat_set<T>>::const_iterator {
+    return m_net.end();
+  }
 };
 
-template<typename T>
-network<T>::network() {
-  //
-}
-
-template<typename T>
-network<T>::~network() {
-  //
-}
-
-template<typename T>
-auto network<T>::size() const -> size_t {
-  size_t sum = 0;
-  for (auto i : m_net) {
-    sum += i.second.size();
-  }
-  return sum;
-}
-
-template<typename T>
-auto network<T>::size(const T &t) const -> size_t {
-  return m_net[t].size();
-}
-
-template<typename T>
-auto network<T>::order() const -> size_t {
-  return m_net.size();
-}
-
 template <typename T>
-auto network<T>::m_test_connectivity(std::map<T, bool> &vs, const T &v) -> void {
-  std::set<T> ns = neighbors(v);
+auto network<T>::m_test_connectivity(boost::container::flat_map<T, bool> &vs, const T &v) -> void {
+  boost::container::flat_set<T> ns = neighbors(v);
   for (auto i : ns) {
     if (vs[i] == false) {
       vs[i] = true;
@@ -114,7 +100,7 @@ auto network<T>::m_test_connectivity(std::map<T, bool> &vs, const T &v) -> void 
 template<typename T>
 auto network<T>::connected() -> bool {
   for (auto i : m_net) {
-    std::map<T, bool> is;
+    boost::container::flat_map<T, bool> is;
     for (auto j : m_net) {
       is[j.first] = (j.first == i.first);
     }
@@ -148,8 +134,8 @@ auto network<T>::rgg(size_t order, double radius, std::mt19937_64 &rng) -> void 
   m_net.clear();
   for (int i = 0; i < order; ++i) {
     T p(unif(rng), unif(rng));
-    std::set<T> emps;
-    m_net.insert(std::pair<T, std::set<T>>(p, emps));
+    boost::container::flat_set<T> emps;
+    m_net.insert(std::pair<T, boost::container::flat_set<T>>(p, emps));
   }
   for (auto i : m_net) {
     for (auto j : m_net) {
@@ -179,8 +165,8 @@ auto network<T>::add_vertex(const T &t) -> bool {
   if (has_vertex(t)) {
     return false;
   } else {
-    std::set<T> emps;
-    m_net.insert(std::pair<T, std::set<T>>(t, emps));
+    boost::container::flat_set<T> emps;
+    m_net.insert(std::pair<T, boost::container::flat_set<T>>(t, emps));
     return true;
   }
 }
@@ -205,33 +191,13 @@ auto network<T>::add_edges(const T &t0, const T &t1) -> size_t {
 }
 
 template<typename T>
-auto network<T>::neighbors(const T &t) -> std::set<T> {
+auto network<T>::neighbors(const T &t) -> boost::container::flat_set<T> {
   return m_net[t];
 }
 
 template<typename T>
-auto network<T>::operator[](const T &t) -> std::set<T> {
+auto network<T>::operator[](const T &t) -> boost::container::flat_set<T> {
   return m_net[t];
-}
-
-template<typename T>
-auto network<T>::begin() -> typename std::map<T, std::set<T>>::iterator {
-  return m_net.begin();
-}
-
-template<typename T>
-auto network<T>::end() -> typename std::map<T, std::set<T>>::iterator {
-  return m_net.end();
-}
-
-template<typename T>
-auto network<T>::begin() const -> typename std::map<T, std::set<T>>::const_iterator {
-  return m_net.begin();
-}
-
-template<typename T>
-auto network<T>::end() const -> typename std::map<T, std::set<T>>::const_iterator{
-  return m_net.end();
 }
 
 template<typename T>

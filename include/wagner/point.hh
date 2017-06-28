@@ -3,26 +3,22 @@
 
 #include <iostream>
 #include <cmath>
-#include <set>
+#include <boost/container/flat_set.hpp>
 
 namespace wagner {
 
-/** An immutable two-dimensional point. */
+// using point = std::tuple<double, double>;
+
+/** A two-dimensional point. */
 struct point {
   /** x-coordinate. */
-  const double x;
+  double x;
 
   /** y-coordinate. */
-  const double y;
+  double y;
 
   /** Constructor. */
   point(double x_, double y_);
-
-  /** Copy constructor. */
-  point(const point &p);
-
-  /** Basic destructor (although there's nothing to destroy). */
-  ~point();
 
   /** Euclidean distance to another point. */
   auto distance_to(const point &p) const -> double;
@@ -66,7 +62,7 @@ inline auto mid_point(const point &p1, const point &p2) -> point {
 }
 
 /** Find the centroid of a set of points. */
-inline auto centroid(const std::set<point> &ps) -> point {
+inline auto centroid(const boost::container::flat_set<point> &ps) -> point {
   double x_ = 0.0;
   double y_ = 0.0;
 

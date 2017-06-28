@@ -12,7 +12,7 @@ option(Sanitize   "Sanitize"   OFF)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
 find_package(Threads REQUIRED)
-#find_package(Boost)
+find_package(Boost REQUIRED)
 find_package(Math)
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
@@ -32,7 +32,7 @@ if (Sanitize)
 endif ()
 
 # Set up directories
-include_directories(. ${PROJECT_SOURCE_DIR}/include)
+include_directories(. ${Boost_INCLUDE_DIRS} ${PROJECT_SOURCE_DIR}/include)
 
 add_subdirectory(src)
 

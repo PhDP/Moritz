@@ -13,7 +13,7 @@ namespace wagner {
 /** An object to store species and their phylogeny. */
 class speciestree {
   tbranch* m_root;              // Root
-  std::set<species*> m_tips;    // The tips of the tree (the extant species).
+  boost::container::flat_set<species*> m_tips;    // The tips of the tree (the extant species).
   size_t m_start_date;          // Start date of the tree.
   size_t m_id_count;            // Counter to name species.
 
@@ -28,7 +28,7 @@ public:
   auto num_species() -> size_t;
 
   /** Remove extinct species. */
-  auto rmv_extinct(size_t date) -> std::set<species*>;
+  auto rmv_extinct(size_t date) -> boost::container::flat_set<species*>;
 
   /** Speciate. */
   auto speciate(species *parent, size_t date) -> species*;
@@ -40,10 +40,10 @@ public:
   auto newick() const -> std::string;
 
   // Iterate the tips of the tree (the extant species):
-  auto begin() -> std::set<species*>::iterator;
-  auto end() -> std::set<species*>::iterator;
-  auto begin() const -> std::set<species*>::const_iterator;
-  auto end() const -> std::set<species*>::const_iterator;
+  auto begin() -> boost::container::flat_set<species*>::iterator;
+  auto end() -> boost::container::flat_set<species*>::iterator;
+  auto begin() const -> boost::container::flat_set<species*>::const_iterator;
+  auto end() const -> boost::container::flat_set<species*>::const_iterator;
 
   /** Return the tree in Newick format. */
   friend auto operator<<(std::ostream &os, const speciestree &t) -> std::ostream&;

@@ -26,8 +26,8 @@ size_t speciestree::num_species() {
   return m_tips.size();
 }
 
-std::set<species *> speciestree::rmv_extinct(size_t date) {
-  std::set<species *> to_rmv;
+boost::container::flat_set<species *> speciestree::rmv_extinct(size_t date) {
+  boost::container::flat_set<species *> to_rmv;
   for (auto i : m_tips) {
     species *s = i;
     if (s->extinct()) {
@@ -107,19 +107,19 @@ std::string speciestree::newick() const {
   return (m_root == nullptr) ? ";" : m_root->newick();
 }
 
-std::set<species *>::iterator speciestree::begin() {
+boost::container::flat_set<species *>::iterator speciestree::begin() {
   return m_tips.begin();
 }
 
-std::set<species *>::iterator speciestree::end() {
+boost::container::flat_set<species *>::iterator speciestree::end() {
   return m_tips.end();
 }
 
-std::set<species *>::const_iterator speciestree::begin() const {
+boost::container::flat_set<species *>::const_iterator speciestree::begin() const {
   return m_tips.begin();
 }
 
-std::set<species *>::const_iterator speciestree::end() const {
+boost::container::flat_set<species *>::const_iterator speciestree::end() const {
   return m_tips.end();
 }
 

@@ -6,8 +6,8 @@
 #include <random>
 #include <vector>
 #include <list>
-#include <set>
-#include <map>
+#include <boost/container/flat_set.hpp>
+#include <boost/container/flat_map.hpp>
 
 #include <cstring>
 #include <cassert>
@@ -175,7 +175,7 @@ int main(int argc, char *argv[]) {
     if (shuffle && t == t_max / 2) {
       for (auto s0 : tree) {
         size_t pops0 = s0->size();
-        set<point> locations = s0->get_locations();
+        boost::container::flat_set<point> locations = s0->get_locations();
         for (auto loc : locations) {
           const point p = landscape.random_vertex(rng);
           s0->rmv_from(loc);
@@ -191,9 +191,9 @@ int main(int argc, char *argv[]) {
     // MIGRATION  //
     ////////////////
     for (auto s0 : tree) {
-      set<point> locations = s0->get_locations();
+      boost::container::flat_set<point> locations = s0->get_locations();
       for (auto loc : locations) {
-        set<point> nei = landscape.neighbors(loc);
+        boost::container::flat_set<point> nei = landscape.neighbors(loc);
         for (auto j : nei) {
           if (locations.find(j) == locations.end()) {
             double mig = mig_max;
@@ -201,7 +201,7 @@ int main(int argc, char *argv[]) {
               double delta = 0.0;
               for (auto s1 : tree) {
                 if (s1 != s0) {
-                  set<point> locations2 = s1->get_locations();
+                  boost::container::flat_set<point> locations2 = s1->get_locations();
                   if (locations2.find(j) != locations2.end()) {
                     delta += 1.0 / (t - s0->get_mrca(*s1));
                   }
@@ -239,7 +239,7 @@ int main(int argc, char *argv[]) {
       i = (size_t)(unif(rng) * species_to_die->size());
       j = 0;
 
-      set<point> locations = species_to_die->get_locations();
+      boost::container::flat_set<point> locations = species_to_die->get_locations();
       for (auto loc : locations) {
         if (i == j) {
           species_to_die->rmv_from(loc);
@@ -289,14 +289,14 @@ int main(int argc, char *argv[]) {
       species *new_species = tree.speciate(to_speciate, t);
 
       // Transfer populations:
-      set<point> to_transfer = to_speciate->pop_group(i);
+      boost::container::flat_set<point> to_transfer = to_speciate->pop_group(i);
       new_species->add_to(to_transfer);
       --speciation_events;
     }
 
     // Epilogue = remove extinct species from the most recent common ancestor
     // map:
-    set<species *> to_rmv = tree.rmv_extinct(t);
+    boost::container::flat_set<species*> to_rmv = tree.rmv_extinct(t);
     ext_per_t.push_back(to_rmv.size());
     species_per_t.push_back(tree.num_species());
 

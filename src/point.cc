@@ -9,15 +9,6 @@ point::point(double x_, double y_) : x(x_), y(y_) {
   // ...
 }
 
-// Copy constructor
-point::point(const point &p) : x(p.x), y(p.y) {
-  // ...
-}
-
-point::~point() {
-  // ...
-}
-
 double point::distance_to(const point &p) const {
   return hypot(x - p.x, y - p.y);
 }
