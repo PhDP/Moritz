@@ -2,7 +2,9 @@ Wagner
 ======
 ![badge.cpp](https://img.shields.io/badge/c++-14-008080.svg?style=flat-square)
 [![license][badge.license]][license]
+
 [badge.license]: https://img.shields.io/badge/License-MIT%202.0-7ec0ee.svg
+
 [license]: https://github.com/PhDP/wagner/blob/master/LICENSE
 
 A theoretical model to study macroevolution and phylogeographies.
