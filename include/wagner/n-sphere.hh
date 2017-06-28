@@ -33,6 +33,7 @@ random_n_sphere(std::mt19937_64& rng, size_t n, double radius = 0.5) noexcept {
   return sphere;
 }
 
+/** \brief Euclidean distance between two vectors. */
 inline double
 euclidean_distance(std::vector<double> const& xs, std::vector<double> const& ys) noexcept {
   double sum = 0.0;
@@ -42,6 +43,21 @@ euclidean_distance(std::vector<double> const& xs, std::vector<double> const& ys)
     sum += sub * sub;
   }
   return std::sqrt(sum);
+}
+
+/** \brief Apply white noise to sphere, making sure it remains within the sphere. */
+inline void
+white_noise(std::vector<double>& xs, std::mt19937_64& rng, std::normal_distribution<>& d, double radius = 0.5) {
+  auto const n = xs.size();
+  for (;;) {
+    auto new_xs = xs;
+    for (auto i = 0u; i < n; ++i) new_xs[i] = xs[i] + d(rng);
+
+    if (in_sphere(new_xs, radius)) {
+      for (auto i = 0u; i < n; ++i) xs[i] = new_xs[i];
+      return;
+    }
+  }
 }
 
 } /* end namespace wagner */

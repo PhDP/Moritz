@@ -43,46 +43,48 @@ int main(int argc, char *argv[]) {
   double aleph = 10.0;
   double speciation = 0.04;
   double speciation_exp = 1.02;
+  double white_noise_std = 0.001;
   double radius = 0.20;
   bool verbose = false;
   bool shuffle = false;
   bool discard = false;
 
   for (int i = 1; i < argc; ++i) {
-    if (std::strcmp(argv[i], "-seed") == 0) {
+    if (std::strcmp(argv[i], "-seed") == 0)
       seed = atoi(argv[i + 1]);
-    } else if (std::strcmp(argv[i], "-n") == 0) {
+    else if (std::strcmp(argv[i], "-n") == 0)
       traits = atoi(argv[i + 1]);
-    } else if (std::strcmp(argv[i], "-c") == 0) {
+    else if (std::strcmp(argv[i], "-w") == 0)
+      white_noise_std = atof(argv[i + 1]);
+    else if (std::strcmp(argv[i], "-c") == 0)
       communities = atoi(argv[i + 1]);
-    } else if (std::strcmp(argv[i], "-t") == 0) {
+    else if (std::strcmp(argv[i], "-t") == 0)
       t_max = atoi(argv[i + 1]);
-    } else if (std::strcmp(argv[i], "-e") == 0) {
+    else if (std::strcmp(argv[i], "-e") == 0)
       ext_max = std::atof(argv[i + 1]);
-    } else if (std::strcmp(argv[i], "-model") == 0) {
+    else if (std::strcmp(argv[i], "-model") == 0)
       model = atoi(argv[i + 1]);
-    } else if (std::strcmp(argv[i], "-m") == 0) {
+    else if (std::strcmp(argv[i], "-m") == 0)
       mig_max = std::atof(argv[i + 1]);
-    } else if (std::strcmp(argv[i], "-a") == 0) {
+    else if (std::strcmp(argv[i], "-a") == 0)
       aleph = std::atof(argv[i + 1]);
-    } else if (std::strcmp(argv[i], "-s") == 0) {
+    else if (std::strcmp(argv[i], "-s") == 0)
       speciation = std::atof(argv[i + 1]);
-    } else if (std::strcmp(argv[i], "-se") == 0) {
+    else if (std::strcmp(argv[i], "-se") == 0)
       speciation_exp = std::atof(argv[i + 1]);
-    } else if (std::strcmp(argv[i], "-r") == 0) {
+    else if (std::strcmp(argv[i], "-r") == 0)
       radius = std::atof(argv[i + 1]);
-    } else if (std::strcmp(argv[i], "-verbose") == 0) {
+    else if (std::strcmp(argv[i], "-verbose") == 0)
       verbose = true;
-    } else if (std::strcmp(argv[i], "-shuffle") == 0) {
+    else if (std::strcmp(argv[i], "-shuffle") == 0)
       shuffle = true;
-    } else if (std::strcmp(argv[i], "-discard") == 0) {
+    else if (std::strcmp(argv[i], "-discard") == 0)
       discard = true;
-      ;
-    }
   }
 
   std::string model_str;
-  const bool has_aleph = (model == wagner_aleph) || (model == wagner_log_aleph);
+  const bool has_aleph = (model == wagner_aleph) || (model == wagner_log_aleph) || (model == wagner_traits);
+  const bool has_traits = model == wagner_traits;
   const bool has_log = (model == wagner_logistic) || (model == wagner_log_aleph);
   if (model == wagner_neutral) {
     model_str = "neutral";
@@ -141,6 +143,10 @@ int main(int argc, char *argv[]) {
   out_info << "   <communities>" << communities << "</communities>\n";
   out_info << "   <radius>" << radius << "</radius>\n";
   out_info << "   <attempts>" << trials << "</attempts>\n";
+  if (has_traits) {
+    out_info << "   <num_traits>" << traits << "</num_traits>\n";
+    out_info << "   <white_noise_std>" << white_noise_std << "</white_noise_std>\n";
+  }
   if (has_aleph) {
     out_info << "   <aleph>" << aleph << "</aleph>\n";
   }

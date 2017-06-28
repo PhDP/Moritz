@@ -43,7 +43,8 @@ You can also use the following options [default values]:
     -t          Number of time steps. Needs to be a power of two [512].
     -e          Per population extinction rate [0.05].
     -m          Max migration rate [0.04].
-    -n          Number of traits [10].
+    -n          Number of traits for the traits model [10].
+    -w          Standard deviation of the white noise applied to traits after each time step [0.001].
     -a          Aleph for models 1 and 3 [10.0].
     -s          Speciation rate (or max speciation rate for logistic models) [0.04].
     -se         With logistic speciation and n species, the speciation rate is 2s/(1 + se^n) [1.02].
