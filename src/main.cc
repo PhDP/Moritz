@@ -296,6 +296,8 @@ int main(int argc, char *argv[]) {
       --speciation_events;
     }
 
+    // For all species: white noise
+
     // Epilogue = remove extinct species from the most recent common ancestor
     // map:
     boost::container::flat_set<wagner::species*> to_rmv = tree.rmv_extinct(t);

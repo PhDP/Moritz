@@ -15,7 +15,7 @@ namespace wagner {
 //template<size_t dim = 0>
 class species : public tbranch {
   //std::array<double, dim> m_traits;
-  std::vector<bool> m_traits;
+  std::vector<float> m_traits;
   boost::container::flat_map<point, int> m_locations; // Location/group map:
   void m_grouping(const point &p, int gid, network<point> &n); // Recursive function used to establish the groups:
   size_t m_groups; // Number of groups:
@@ -26,6 +26,8 @@ class species : public tbranch {
 
   /** Basic constructor. */
   species(size_t i, size_t ntraits = 0);
+
+//  species(size_t i, std::vector<float> const& starting_traits);
 
   /** Return true if extinct. */
   auto extinct() const -> bool;
