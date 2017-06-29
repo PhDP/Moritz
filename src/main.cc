@@ -20,11 +20,11 @@
 #include "wagner/n-sphere.hh"
 
 // Version:
-#define wagner_version  2
-#define wagner_revision 1
+constexpr size_t wagner_version = 2;
+constexpr size_t wagner_revision = 0;
 
 // Models:
-enum model {
+enum class model {
   wagner_neutral = 0,
   wagner_aleph = 1,
   wagner_logistic = 2,
@@ -32,11 +32,37 @@ enum model {
   wagner_traits = 4
 };
 
+auto operator<<(std::ostream& os, model const& m) -> std::ostream& {
+  switch(m) {
+    case model::wagner_neutral:
+      os << "neutral";
+      break;
+    case model::wagner_aleph:
+      os << "aleph";
+      break;
+    case model::wagner_logistic:
+      os << "logistic";
+      break;
+    case model::wagner_log_aleph:
+      os << "log aleph";
+      break;
+    case model::wagner_traits:
+      os << "with traits";
+      break;
+  }
+  return os;
+}
+
+void wagner_simulation(model m, size_t seed, size_t t_max, size_t communities,
+                       size_t traits, double ext_max, double mig_max,
+                       double aleph, double speciation, double speciation_exp,
+                       double radius, float white_noise_std, bool verbose,
+                       bool shuffle, bool discard) noexcept;
+
 int main(int argc, char *argv[]) {
   size_t threads = 1; // number of threads
-  size_t model = wagner_aleph;
+  model m = model::wagner_traits;
   size_t seed = std::random_device{}();
-  bool manual_seed = false;
   size_t t_max = (1 << 9);
   size_t communities = 64;
   size_t traits = 10;
@@ -52,10 +78,28 @@ int main(int argc, char *argv[]) {
   bool discard = false;
 
   for (int i = 1; i < argc; ++i) {
-    if (std::strcmp(argv[i], "-seed") == 0) {
-      manual_seed = true;
-      seed = atoi(argv[i + 1]);
+    if (std::strcmp(argv[i], "-model") == 0) {
+      const int model_id = atoi(argv[i + 1]);
+      switch(model_id) {
+        case 0:
+          m = model::wagner_neutral;
+          break;
+        case 1:
+          m = model::wagner_aleph;
+          break;
+        case 2:
+          m = model::wagner_logistic;
+          break;
+        case 3:
+          m = model::wagner_log_aleph;
+          break;
+        case 4:
+        default:
+          m = model::wagner_traits;
+      }
     }
+    else if (std::strcmp(argv[i], "-seed") == 0)
+      seed = atoi(argv[i + 1]);
     else if (std::strcmp(argv[i], "-n") == 0)
       traits = atoi(argv[i + 1]);
     else if (std::strcmp(argv[i], "-w") == 0)
@@ -66,8 +110,6 @@ int main(int argc, char *argv[]) {
       t_max = atoi(argv[i + 1]);
     else if (std::strcmp(argv[i], "-e") == 0)
       ext_max = std::atof(argv[i + 1]);
-    else if (std::strcmp(argv[i], "-model") == 0)
-      model = atoi(argv[i + 1]);
     else if (std::strcmp(argv[i], "-m") == 0)
       mig_max = std::atof(argv[i + 1]);
     else if (std::strcmp(argv[i], "-a") == 0)
@@ -86,22 +128,6 @@ int main(int argc, char *argv[]) {
       discard = true;
   }
 
-  std::string model_str;
-  const bool has_aleph = (model == wagner_aleph) || (model == wagner_log_aleph) || (model == wagner_traits);
-  const bool has_traits = model == wagner_traits;
-  const bool has_log = (model == wagner_logistic) || (model == wagner_log_aleph);
-  if (model == wagner_neutral) {
-    model_str = "neutral";
-  } else if (model == wagner_aleph) {
-    model_str = "alpeh";
-  } else if (model == wagner_logistic) {
-    model_str = "logistic";
-  } else if (model == wagner_log_aleph) {
-    model_str = "log_aleph";
-  } else if (model == wagner_traits) {
-    model_str = "with_traits";
-  }
-
   // Force 't_max' to be a power of two:
   if (!power_of_two(t_max)) {
     size_t new_t = 1;
@@ -110,6 +136,32 @@ int main(int argc, char *argv[]) {
     }
     t_max = (new_t >> 1);
   }
+
+  wagner_simulation(m, seed, t_max, communities, traits, ext_max, mig_max, aleph, speciation, speciation_exp, radius, white_noise_std, verbose, shuffle, discard);
+
+  return 0;
+}
+
+void wagner_simulation(
+    model m,
+    size_t seed,
+    size_t t_max,
+    size_t communities,
+    size_t traits,
+    double ext_max,
+    double mig_max,
+    double aleph,
+    double speciation,
+    double speciation_exp,
+    double radius,
+    float white_noise_std,
+    bool verbose,
+    bool shuffle,
+    bool discard) noexcept {
+
+  const bool has_aleph = (m == model::wagner_aleph) || (m == model::wagner_log_aleph);
+  const bool has_traits = m == model::wagner_traits;
+  const bool has_log = (m == model::wagner_logistic) || (m == model::wagner_log_aleph);
 
   std::vector<size_t> speciation_per_t;
   std::vector<size_t> ext_per_t;
@@ -127,7 +179,7 @@ int main(int argc, char *argv[]) {
   do {
     if (++trials > 100000) {
       std::cout << "Terminating after 100 000 attempts were made to generate the spatial network.\n";
-      return 0;
+      return;
     }
     landscape.rgg(communities, radius, rng);
   } while (!landscape.connected());
@@ -142,7 +194,7 @@ int main(int argc, char *argv[]) {
   out_info << "<wagner>\n";
   out_info << "   <version>" << wagner_version << "</version>\n";
   out_info << "   <revision>" << wagner_revision << "</revision>\n";
-  out_info << "   <model>" << model_str << "</model>\n";
+  out_info << "   <model>" << m << "</model>\n";
   out_info << "   <shuffle>" << shuffle << "</shuffle>\n";
   out_info << "   <master_seed>" << seed << "</master_seed>\n";
   out_info << "   <t_max>" << t_max << "</t_max>\n";
@@ -351,5 +403,4 @@ int main(int argc, char *argv[]) {
   out_info << "</species_per_t>\n";
   out_info << "</wagner>\n";
   out_info.close();
-  return 0;
 }
