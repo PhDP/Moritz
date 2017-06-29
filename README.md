@@ -50,6 +50,7 @@ The current version supports four models:
 
 You can also use the following options [default values]:
 
+    -threads    Number of threads to launch [number of available cores].
     -seed       Seed for the random number generator [6].
     -c          Number of communities (or vertices, or nodes, or patches) [64].
     -t          Number of time steps. Needs to be a power of two [512].

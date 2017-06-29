@@ -5,7 +5,7 @@
 #include <string>
 #include <random>
 #include <vector>
-#include <list>
+#include <thread>
 #include <boost/container/flat_set.hpp>
 #include <boost/container/flat_map.hpp>
 
@@ -60,7 +60,7 @@ void wagner_simulation(model m, size_t seed, size_t t_max, size_t communities,
                        bool shuffle, bool discard) noexcept;
 
 int main(int argc, char *argv[]) {
-  size_t threads = 1; // number of threads
+  size_t nthreads = std::thread::hardware_concurrency(); // number of threads
   model m = model::wagner_traits;
   size_t seed = std::random_device{}();
   size_t t_max = (1 << 9);
@@ -98,6 +98,8 @@ int main(int argc, char *argv[]) {
           m = model::wagner_traits;
       }
     }
+    else if (std::strcmp(argv[i], "-threads") == 0)
+      nthreads = atoi(argv[i + 1]);
     else if (std::strcmp(argv[i], "-seed") == 0)
       seed = atoi(argv[i + 1]);
     else if (std::strcmp(argv[i], "-n") == 0)
@@ -137,7 +139,19 @@ int main(int argc, char *argv[]) {
     t_max = (new_t >> 1);
   }
 
-  wagner_simulation(m, seed, t_max, communities, traits, ext_max, mig_max, aleph, speciation, speciation_exp, radius, white_noise_std, verbose, shuffle, discard);
+  std::cout << t_max << '\n';
+
+  // Seed the various threads
+  std::mt19937_64 rng(seed); // The engine
+  std::uniform_int_distribution<size_t> uni;
+
+  std::vector<std::thread> threads;
+
+  for (auto i = 0u; i < nthreads; ++i)
+    threads.push_back(std::thread(wagner_simulation, m, uni(rng), t_max, communities, traits, ext_max, mig_max, aleph, speciation, speciation_exp, radius, white_noise_std, verbose, shuffle, discard));
+
+  for (auto& thread : threads)
+    thread.join();
 
   return 0;
 }
