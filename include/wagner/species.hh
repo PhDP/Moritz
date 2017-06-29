@@ -12,13 +12,11 @@ namespace wagner {
 
 /** Species as the leaf of a phylogenetic tree. */
 
-//template<size_t dim = 0>
 class species : public tbranch {
-  //std::array<double, dim> m_traits;
   std::vector<float> m_traits;
-  boost::container::flat_map<point, int> m_locations; // Location/group map:
-  void m_grouping(const point &p, int gid, network<point> &n); // Recursive function used to establish the groups:
-  size_t m_groups; // Number of groups:
+  boost::container::flat_map<point, int> m_locations; // Location/group map.
+  void m_grouping(const point &p, int gid, network<point> &n); // Recursive function used to establish the groups.
+  size_t m_groups; // Number of groups.
 
  public:
   /** Unique ID of the species. */
@@ -30,13 +28,20 @@ class species : public tbranch {
   /** Creates a species with a starting set of traits. */
   species(size_t i, std::vector<float> const& starting_traits);
 
-  auto begin() const -> std::vector<float>::const_iterator {
-    return m_traits.begin();
-  }
+  /** Returns the number of traits. */
+  auto num_traits() const -> size_t;
 
-  auto end() const -> std::vector<float>::const_iterator {
-    return m_traits.end();
-  }
+  /** Returns a reference to the trait vector. */
+  auto traits() -> std::vector<float>&;
+
+  /** Get the value of the nth trait. */
+  auto operator[](size_t idx) -> float&;
+
+  /** Iterate over the specie' traits. */
+  auto begin() const -> std::vector<float>::const_iterator;
+
+  /** End of the vector of traits. */
+  auto end() const -> std::vector<float>::const_iterator;
 
   /** Return true if extinct. */
   auto extinct() const -> bool;
@@ -80,7 +85,7 @@ class species : public tbranch {
   auto get_mrca(const species &s) const -> size_t;
 
   /** Get most-recent-common-ancestor info given a set of parents. */
-  auto get_mrca(const boost::container::flat_set<tbranch *> &ps) const -> size_t;
+  auto get_mrca(const boost::container::flat_set<tbranch*> &ps) const -> size_t;
 
   /** Return the set of locations where both species are found (co-occurence). */
   auto operator&(species &s) const -> boost::container::flat_set<point>;

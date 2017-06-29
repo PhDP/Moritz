@@ -13,8 +13,33 @@
 namespace wagner {
 
 species::species(size_t i, size_t ntraits)
-  : tbranch(nullptr, nullptr, nullptr), id(i) {
+  : tbranch(nullptr, nullptr, nullptr), id{i}, m_traits{std::vector<float>(ntraits, 0.0f)} {
   //
+}
+
+species::species(size_t i, std::vector<float> const& starting_traits)
+  : tbranch(nullptr, nullptr, nullptr), id(i), m_traits{starting_traits} {
+  //
+}
+
+auto species::num_traits() const -> size_t {
+  return m_traits.size();
+}
+
+auto species::traits() -> std::vector<float>& {
+  return m_traits;
+}
+
+auto species::operator[](size_t idx) -> float& {
+  return m_traits[idx];
+}
+
+auto species::begin() const -> std::vector<float>::const_iterator {
+  return m_traits.begin();
+}
+
+auto species::end() const -> std::vector<float>::const_iterator {
+  return m_traits.end();
 }
 
 size_t species::size() const {
@@ -184,7 +209,13 @@ std::string species::get_info(size_t time) const {
     oss << " <vertex><position>" << i.first << "</position><group>" << i.second
         << "</group></vertex>";
   }
-  oss << "</locations></species>";
+  oss << "</locations> <traits>[";
+  auto const n = m_traits.size();
+  if (n) {
+    oss << m_traits[0];
+    for (auto i = 1u; i < n; ++i) oss << ", " << m_traits[i];
+  }
+  oss << "]</traits></species>";
   return oss.str();
 }
 

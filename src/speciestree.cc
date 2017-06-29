@@ -7,12 +7,13 @@
 #include "wagner/tbranch.hh"
 #include "wagner/species.hh"
 #include "wagner/point.hh"
+#include "wagner/n-sphere.hh"
 
 namespace wagner {
 
-speciestree::speciestree() {
+speciestree::speciestree(std::vector<float> const& traits) {
   m_id_count = 0;
-  species *s0 = new species(m_id_count++);
+  species *s0 = new species(m_id_count++, traits);
   m_tips.insert(s0);
   m_start_date = 0;
   m_root = s0;
@@ -63,7 +64,7 @@ boost::container::flat_set<species *> speciestree::rmv_extinct(size_t date) {
   return to_rmv;
 }
 
-species *speciestree::speciate(species *p, size_t date) {
+species* speciestree::speciate(species* p, size_t date) {
   species *s0 = p;
   tbranch *new_parent = new tbranch(s0->parent(), nullptr, nullptr);
   new_parent->set_end_date(date);
@@ -79,7 +80,8 @@ species *speciestree::speciate(species *p, size_t date) {
     m_start_date += date;
   }
 
-  species *s1 = new species(m_id_count++);
+//  species *s1 = new species(m_id_count++);
+  species *s1 = new species(m_id_count++, p->traits());
   s1->set_parent(new_parent);
 
   new_parent->set_left(s0);
@@ -107,23 +109,23 @@ std::string speciestree::newick() const {
   return (m_root == nullptr) ? ";" : m_root->newick();
 }
 
-boost::container::flat_set<species *>::iterator speciestree::begin() {
+boost::container::flat_set<species*>::iterator speciestree::begin() {
   return m_tips.begin();
 }
 
-boost::container::flat_set<species *>::iterator speciestree::end() {
+boost::container::flat_set<species*>::iterator speciestree::end() {
   return m_tips.end();
 }
 
-boost::container::flat_set<species *>::const_iterator speciestree::begin() const {
+boost::container::flat_set<species*>::const_iterator speciestree::begin() const {
   return m_tips.begin();
 }
 
-boost::container::flat_set<species *>::const_iterator speciestree::end() const {
+boost::container::flat_set<species*>::const_iterator speciestree::end() const {
   return m_tips.end();
 }
 
-std::ostream &operator<<(std::ostream &os, const speciestree &t) {
+std::ostream& operator<<(std::ostream &os, const speciestree &t) {
   os << t.newick();
   return os;
 }

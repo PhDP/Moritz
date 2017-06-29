@@ -17,6 +17,7 @@
 #include "wagner/point.hh"
 #include "wagner/species.hh"
 #include "wagner/network.hh"
+#include "wagner/n-sphere.hh"
 
 // Version:
 #define wagner_version  2
@@ -32,9 +33,10 @@ enum model {
 };
 
 int main(int argc, char *argv[]) {
+  size_t threads = 1; // number of threads
   size_t model = wagner_aleph;
-  // size_t x = 1; // number of threads
-  size_t seed = 42;
+  size_t seed = std::random_device{}();
+  bool manual_seed = false;
   size_t t_max = (1 << 9);
   size_t communities = 64;
   size_t traits = 10;
@@ -43,15 +45,17 @@ int main(int argc, char *argv[]) {
   double aleph = 10.0;
   double speciation = 0.04;
   double speciation_exp = 1.02;
-  double white_noise_std = 0.001;
   double radius = 0.20;
+  float white_noise_std = 0.001f;
   bool verbose = false;
   bool shuffle = false;
   bool discard = false;
 
   for (int i = 1; i < argc; ++i) {
-    if (std::strcmp(argv[i], "-seed") == 0)
+    if (std::strcmp(argv[i], "-seed") == 0) {
+      manual_seed = true;
       seed = atoi(argv[i + 1]);
+    }
     else if (std::strcmp(argv[i], "-n") == 0)
       traits = atoi(argv[i + 1]);
     else if (std::strcmp(argv[i], "-w") == 0)
@@ -94,7 +98,7 @@ int main(int argc, char *argv[]) {
     model_str = "logistic";
   } else if (model == wagner_log_aleph) {
     model_str = "log_aleph";
-  } else {
+  } else if (model == wagner_traits) {
     model_str = "with_traits";
   }
 
@@ -113,6 +117,8 @@ int main(int argc, char *argv[]) {
 
   std::mt19937_64 rng(seed); // The engine
   std::uniform_real_distribution<> unif;
+  std::uniform_real_distribution<float> uniff;
+  std::normal_distribution<float> noise(0.0f, white_noise_std);
 
   char buffer[50]; // Yep, for good old C methods :P
 
@@ -159,12 +165,14 @@ int main(int argc, char *argv[]) {
   out_info << "   <extinction>" << ext_max << "</extinction>\n";
 
   // Where the species are stored:
-  wagner::speciestree tree;
+  wagner::speciestree tree(wagner::random_n_sphere<float>(rng, traits, 0.5f)); // Starts with one species.
   for (auto sp : tree) {
     for (auto p : landscape) {
       sp->add_to(p.first);
     }
   }
+
+  assert(tree->num_species() == 1);
 
   size_t n_pops = landscape.order();
 
@@ -290,6 +298,8 @@ int main(int argc, char *argv[]) {
       // Speciate and get the new species:
       wagner::species *new_species = tree.speciate(to_speciate, t);
 
+      assert(new_species->num_traits() == traits);
+
       // Transfer populations:
       boost::container::flat_set<wagner::point> to_transfer = to_speciate->pop_group(i);
       new_species->add_to(to_transfer);
@@ -297,6 +307,11 @@ int main(int argc, char *argv[]) {
     }
 
     // For all species: white noise
+    if (has_traits) {
+      for (auto sp : tree) {
+        wagner::white_noise(sp->traits(), rng, noise, 0.5f);
+      }
+    }
 
     // Epilogue = remove extinct species from the most recent common ancestor
     // map:

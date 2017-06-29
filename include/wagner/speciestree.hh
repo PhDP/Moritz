@@ -18,8 +18,8 @@ class speciestree {
   size_t m_id_count;            // Counter to name species.
 
 public:
-  /** Basic constructor. Creates a species and place it at the root. */
-  speciestree();
+  /** Basic constructor. Creates a species with its initial vector of traits and place it at the root. */
+  speciestree(std::vector<float> const& traits);
 
   /** Basic destructor. */
   ~speciestree();
