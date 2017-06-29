@@ -74,10 +74,8 @@ boost::container::flat_set<point> species::pop_group(int g) {
   return gr;
 }
 
-boost::container::flat_set<point> species::get_locations() const {
-  boost::container::flat_set<point> l;
-  for (auto i : m_locations) l.insert(i.first);
-  return l;
+auto species::get_locations() const -> boost::container::flat_map<point, int> const& {
+  return m_locations;
 }
 
 size_t species::up_groups(network<point> &n) {
@@ -176,13 +174,13 @@ bool species::operator>(const species &s) const {
   return id > s.id;
 }
 
-boost::container::flat_set<point> species::operator&(species &s) const {
+auto species::operator&(species &s) const -> boost::container::flat_set<point> {
   boost::container::flat_set<point> l;
-  boost::container::flat_set<point> l0 = get_locations();
-  boost::container::flat_set<point> l1 = s.get_locations();
-  for (auto i : l0) {
-    if (l1.find(i) != l1.end()) {
-      l.insert(i);
+  auto l0 = get_locations();
+  auto l1 = s.get_locations();
+  for (auto const& i : l0) {
+    if (l1.find(i.first) != l1.end()) {
+      l.insert(i.first);
     }
   }
   return l;
@@ -202,9 +200,8 @@ std::string species::newick() const {
 
 std::string species::get_info(size_t time) const {
   std::ostringstream oss;
-  auto const locations = get_locations();
   oss << "<species> <id>" << id << "</id> <centroid>"
-      << centroid(locations) << "</centroid> <locations>";
+      << centroid(m_locations) << "</centroid> <locations>";
   for (auto i : m_locations) {
     oss << " <vertex><position>" << i.first << "</position><group>" << i.second
         << "</group></vertex>";

@@ -63,10 +63,10 @@ class network {
   auto add_edges(const T &t0, const T &t1) -> size_t;
 
   /** Return the set of neighbors for vertex 'v'. */
-  auto neighbors(const T &t) -> boost::container::flat_set<T>;
+  auto neighbors(const T &t) -> boost::container::flat_set<T>&;
 
   /** Return the set of neighbors for vertex 'v'. */
-  auto operator[](const T &t) -> boost::container::flat_set<T>;
+  auto operator[](const T &t) -> boost::container::flat_set<T>&;
 
   // Iterate the network:
   auto begin() noexcept -> typename boost::container::flat_map<T, boost::container::flat_set<T>>::iterator {
@@ -191,12 +191,12 @@ auto network<T>::add_edges(const T &t0, const T &t1) -> size_t {
 }
 
 template<typename T>
-auto network<T>::neighbors(const T &t) -> boost::container::flat_set<T> {
+auto network<T>::neighbors(const T &t) -> boost::container::flat_set<T>& {
   return m_net[t];
 }
 
 template<typename T>
-auto network<T>::operator[](const T &t) -> boost::container::flat_set<T> {
+auto network<T>::operator[](const T &t) -> boost::container::flat_set<T>& {
   return m_net[t];
 }
 

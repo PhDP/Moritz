@@ -4,6 +4,7 @@
 #include <iostream>
 #include <cmath>
 #include <boost/container/flat_set.hpp>
+#include <boost/container/flat_map.hpp>
 
 namespace wagner {
 
@@ -66,9 +67,24 @@ inline auto centroid(const boost::container::flat_set<point> &ps) -> point {
   double x_ = 0.0;
   double y_ = 0.0;
 
-  for (auto p : ps) {
+  for (auto const& p : ps) {
     x_ += p.x;
     y_ += p.y;
+  }
+  x_ /= ps.size();
+  y_ /= ps.size();
+
+  return point(x_, y_);
+}
+
+/** Find the centroid of a set of points. */
+inline auto centroid(const boost::container::flat_map<point, int> &ps) -> point {
+  double x_ = 0.0;
+  double y_ = 0.0;
+
+  for (auto const& p : ps) {
+    x_ += p.first.x;
+    y_ += p.first.y;
   }
   x_ /= ps.size();
   y_ /= ps.size();

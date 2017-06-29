@@ -61,7 +61,7 @@ class species : public tbranch {
   auto pop_group(int g) -> boost::container::flat_set<point>;
 
   /** Return the set of locations. */
-  auto get_locations() const -> boost::container::flat_set<point>;
+  auto get_locations() const -> boost::container::flat_map<point, int> const&;
 
   /** Test if the species is at the given location. */
   auto is_in(const point &p) const -> bool;

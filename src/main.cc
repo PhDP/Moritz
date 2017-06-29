@@ -46,7 +46,7 @@ int main(int argc, char *argv[]) {
   double speciation = 0.04;
   double speciation_exp = 1.02;
   double radius = 0.20;
-  float white_noise_std = 0.001f;
+  float white_noise_std = 0.005f;
   bool verbose = false;
   bool shuffle = false;
   bool discard = false;
@@ -172,7 +172,7 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  assert(tree->num_species() == 1);
+  assert(tree.num_species() == 1);
 
   size_t n_pops = landscape.order();
 
@@ -185,10 +185,10 @@ int main(int argc, char *argv[]) {
     if (shuffle && t == t_max / 2) {
       for (auto s0 : tree) {
         size_t pops0 = s0->size();
-        boost::container::flat_set<wagner::point> locations = s0->get_locations();
-        for (auto loc : locations) {
+        auto locations = s0->get_locations();
+        for (auto const& location : locations) {
           const wagner::point p = landscape.random_vertex(rng);
-          s0->rmv_from(loc);
+          s0->rmv_from(location.first);
           s0->add_to(p);
         }
         const int pops_lost = pops0 - s0->size();
@@ -201,29 +201,38 @@ int main(int argc, char *argv[]) {
     // MIGRATION  //
     ////////////////
     for (auto s0 : tree) {
-      boost::container::flat_set<wagner::point> locations = s0->get_locations();
-      for (auto loc : locations) {
-        boost::container::flat_set<wagner::point> nei = landscape.neighbors(loc);
-        for (auto j : nei) {
-          if (locations.find(j) == locations.end()) {
+      auto const presences = s0->get_locations(); // Get a reference, too slow!!!!
+      for (auto const& presence : presences) {
+        auto const neighbors = landscape.neighbors(presence.first);
+        for (auto const& location : neighbors) {
+          if (presences.find(location) == presences.end()) {
             double mig = mig_max;
-            if (has_aleph) {
+
+            if (has_traits || has_aleph) {
               double delta = 0.0;
               for (auto s1 : tree) {
                 if (s1 != s0) {
-                  boost::container::flat_set<wagner::point> locations2 = s1->get_locations();
-                  if (locations2.find(j) != locations2.end()) {
-                    delta += 1.0 / (t - s0->get_mrca(*s1));
+                  auto const presences1 = s1->get_locations(); // Get a freaking ref!!!
+                  if (presences1.find(location) != presences1.end()) {
+                    if (has_traits) {
+                      const auto dist = wagner::euclidean_distance(s0->traits(), s1->traits());
+                      assert(dist >= 0.0f && dist <= 1.0f);
+                      delta += 1.0 - dist;
+                    } else {
+                      delta += 1.0 / (t - s0->get_mrca(*s1));
+                    }
                   }
                 }
               }
               mig *= exp(-aleph * delta);
             }
-            if (s0->is_in(j) == false && unif(rng) < mig) {
-              s0->add_to(j);
+
+            if (!s0->is_in(location) && unif(rng) < mig) {
+              s0->add_to(location);
               ++n_pops;
             }
           }
+
         }
       }
     }
@@ -249,10 +258,10 @@ int main(int argc, char *argv[]) {
       i = (size_t)(unif(rng) * species_to_die->size());
       j = 0;
 
-      boost::container::flat_set<wagner::point> locations = species_to_die->get_locations();
-      for (auto loc : locations) {
+      auto const& locations = species_to_die->get_locations();
+      for (auto const& location : locations) {
         if (i == j) {
-          species_to_die->rmv_from(loc);
+          species_to_die->rmv_from(location.first);
           break;
         } else {
           ++j;
