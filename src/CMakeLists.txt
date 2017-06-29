@@ -3,6 +3,7 @@ set(wagner_src
   species.cc
   speciestree.cc
   tbranch.cc
+  simulation.cc
 )
 
 # Compile the library

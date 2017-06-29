@@ -5,6 +5,9 @@
 
 namespace wagner {
 
+constexpr size_t wagner_version = 2;
+constexpr size_t wagner_revision = 0;
+
 /** Mathematical constant e. */
 #define math_e 2.71828182845904523536
 
