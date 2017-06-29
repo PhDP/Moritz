@@ -94,8 +94,13 @@ int main(int argc, char *argv[]) {
   std::vector<std::thread> threads;
 
   // Rather naive but hey, it works fine:
-  for (auto i = 0u; i < nthreads; ++i)
-    threads.push_back(std::thread(wagner::simulation, m, uni(rng), t_max, communities, traits, ext_max, mig_max, aleph, speciation, speciation_exp, radius, white_noise_std, verbose, shuffle, discard));
+  for (auto i = 0u; i < nthreads; ++i) {
+    threads.push_back(
+      std::thread(
+        wagner::simulation, m, uni(rng), t_max, communities, traits, ext_max,
+        mig_max, aleph, speciation, speciation_exp, radius, white_noise_std,
+        verbose, shuffle, discard));
+  }
 
   for (auto& thread : threads)
     thread.join();

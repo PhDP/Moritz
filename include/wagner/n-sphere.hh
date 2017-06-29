@@ -13,19 +13,17 @@ namespace wagner {
          in the n-sphere with a certain radius.
  */
 template<typename Real>
-bool
-in_sphere(std::vector<Real> const& sphere, Real radius = 0.5) noexcept {
+auto in_sphere(std::vector<Real> const& sphere, Real radius = 0.5)
+               noexcept -> bool {
   Real sum = 0.0;
   for (auto x : sphere) sum += x * x;
   return sum < radius * radius;
 }
 
-/**
-  \brief Generates the coordinates of a n-dimentional sphere within a given radius
- */
+/** Generates the coordinates of a n-dimentional sphere within a given radius */
 template<typename Real>
-std::vector<Real>
-random_n_sphere(std::mt19937_64& rng, size_t n, Real radius = 0.5) noexcept {
+auto random_n_sphere(std::mt19937_64& rng, size_t n, Real radius = 0.5)
+                     noexcept -> std::vector<Real> {
   auto sphere = std::vector<Real>(n, 0.0);
   auto dist = std::uniform_real_distribution<Real>{-radius, radius};
   do {
@@ -35,10 +33,10 @@ random_n_sphere(std::mt19937_64& rng, size_t n, Real radius = 0.5) noexcept {
   return sphere;
 }
 
-/** \brief Euclidean distance between two vectors. */
+/** Euclidean distance between two vectors. */
 template<typename Real>
-Real
-euclidean_distance(std::vector<Real> const& xs, std::vector<Real> const& ys) noexcept {
+auto euclidean_distance(std::vector<Real> const& xs,
+                        std::vector<Real> const& ys) noexcept -> Real {
   Real sum = 0.0;
   size_t const n = std::min(xs.size(), ys.size());
   for (auto i = 0u; i < n; ++i) {
@@ -48,10 +46,11 @@ euclidean_distance(std::vector<Real> const& xs, std::vector<Real> const& ys) noe
   return std::sqrt(sum);
 }
 
-/** \brief Apply white noise to sphere, making sure it remains within the sphere. */
+/** Apply white noise to sphere, making sure it remains within the sphere. */
 template<typename Real>
-void
-white_noise(std::vector<Real>& xs, std::mt19937_64& rng, std::normal_distribution<Real>& d, Real radius = 0.5) {
+auto white_noise(std::vector<Real>& xs, std::mt19937_64& rng,
+                 std::normal_distribution<Real>& d, Real radius = 0.5)
+                 noexcept -> void {
   auto const n = xs.size();
   for (;;) {
     auto new_xs = xs;

@@ -13,11 +13,12 @@ namespace wagner {
 template<typename T>
 class network {
   boost::container::flat_map<T, boost::container::flat_set<T>> m_net;
-  void m_test_connectivity(boost::container::flat_map<T, bool> &vs, const T &t);
+  auto m_test_connectivity(boost::container::flat_map<T, bool> &vs, const T &t) noexcept -> void;
 
  public:
   /** Basic constructor. */
   network() noexcept {
+    //
   }
 
   /** Number of edges in the entire network. */
@@ -38,35 +39,35 @@ class network {
   }
 
   /** Destroy all vertices and create a random geometric graph. */
-  auto rgg(size_t order, double radius, std::mt19937_64 &rng) -> void;
+  auto rgg(size_t order, double radius, std::mt19937_64 &rng) noexcept -> void;
 
   /** Return true if the network is strongly connected. */
-  auto connected() -> bool;
+  auto connected() noexcept -> bool;
 
   /** Return one vertex of the graph at random. */
-  auto random_vertex(std::mt19937_64 &rng) -> T; // What????
+  auto random_vertex(std::mt19937_64 &rng) noexcept -> T; // What????
 
   /** Return true if the vertex is present. */
-  auto has_vertex(const T &t) const -> bool;
+  auto has_vertex(const T &t) const noexcept -> bool;
 
   /** Return true if an edge is present between v0 and v1. */
-  auto has_edge(const T &t0, const T &t1) -> bool;
+  auto has_edge(const T &t0, const T &t1) noexcept -> bool;
 
   /** Add a vertex. */
-  auto add_vertex(const T &t) -> bool;
+  auto add_vertex(const T &t) noexcept -> bool;
 
   /** Add an edge between vertices v0 and v1. */
-  auto add_edge(const T &t0, const T &t1) -> size_t;
+  auto add_edge(const T &t0, const T &t1) noexcept -> size_t;
 
   /** Add an edge between vertives v0 and v1 and betwen v1 and v0. Return the
    * number of edges added. */
-  auto add_edges(const T &t0, const T &t1) -> size_t;
+  auto add_edges(const T &t0, const T &t1) noexcept -> size_t;
 
   /** Return the set of neighbors for vertex 'v'. */
-  auto neighbors(const T &t) -> boost::container::flat_set<T>&;
+  auto neighbors(const T &t) noexcept -> boost::container::flat_set<T>&;
 
   /** Return the set of neighbors for vertex 'v'. */
-  auto operator[](const T &t) -> boost::container::flat_set<T>&;
+  auto operator[](const T &t) noexcept -> boost::container::flat_set<T>&;
 
   // Iterate the network:
   auto begin() noexcept -> typename boost::container::flat_map<T, boost::container::flat_set<T>>::iterator {
@@ -86,8 +87,8 @@ class network {
   }
 };
 
-template <typename T>
-auto network<T>::m_test_connectivity(boost::container::flat_map<T, bool> &vs, const T &v) -> void {
+template<typename T>
+auto network<T>::m_test_connectivity(boost::container::flat_map<T, bool> &vs, const T &v) noexcept -> void {
   boost::container::flat_set<T> ns = neighbors(v);
   for (auto i : ns) {
     if (vs[i] == false) {
@@ -98,7 +99,7 @@ auto network<T>::m_test_connectivity(boost::container::flat_map<T, bool> &vs, co
 }
 
 template<typename T>
-auto network<T>::connected() -> bool {
+auto network<T>::connected() noexcept -> bool {
   for (auto i : m_net) {
     boost::container::flat_map<T, bool> is;
     for (auto j : m_net) {
@@ -116,7 +117,7 @@ auto network<T>::connected() -> bool {
 }
 
 template<typename T>
-auto network<T>::random_vertex(std::mt19937_64 &rng) -> T {
+auto network<T>::random_vertex(std::mt19937_64 &rng) noexcept -> T {
   std::uniform_int_distribution<> unif(0, m_net.size());
   const size_t v = unif(rng);
   size_t index = 0;
@@ -128,8 +129,8 @@ auto network<T>::random_vertex(std::mt19937_64 &rng) -> T {
   exit(EXIT_FAILURE);
 }
 
-template <typename T>
-auto network<T>::rgg(size_t order, double radius, std::mt19937_64 &rng) -> void {
+template<typename T>
+auto network<T>::rgg(size_t order, double radius, std::mt19937_64 &rng) noexcept -> void {
   std::uniform_real_distribution<> unif;
   m_net.clear();
   for (int i = 0; i < order; ++i) {
@@ -147,12 +148,12 @@ auto network<T>::rgg(size_t order, double radius, std::mt19937_64 &rng) -> void 
 }
 
 template<typename T>
-auto network<T>::has_vertex(const T &t) const -> bool {
+auto network<T>::has_vertex(const T &t) const noexcept -> bool {
   return m_net.find(t) != m_net.end();
 }
 
 template<typename T>
-auto network<T>::has_edge(const T &t0, const T &t1) -> bool {
+auto network<T>::has_edge(const T &t0, const T &t1) noexcept -> bool {
   if (has_vertex(t0) && has_vertex(t1)) {
     return (m_net[t0].find(t1) != m_net[t0].end());
   } else {
@@ -161,7 +162,7 @@ auto network<T>::has_edge(const T &t0, const T &t1) -> bool {
 }
 
 template<typename T>
-auto network<T>::add_vertex(const T &t) -> bool {
+auto network<T>::add_vertex(const T &t) noexcept -> bool {
   if (has_vertex(t)) {
     return false;
   } else {
@@ -172,7 +173,7 @@ auto network<T>::add_vertex(const T &t) -> bool {
 }
 
 template <typename T>
-auto network<T>::add_edge(const T &t0, const T &t1) -> size_t {
+auto network<T>::add_edge(const T &t0, const T &t1) noexcept -> size_t {
   if (has_vertex(t0)) {
     if (has_edge(t0, t1)) {
       return 0;
@@ -186,22 +187,22 @@ auto network<T>::add_edge(const T &t0, const T &t1) -> size_t {
 }
 
 template<typename T>
-auto network<T>::add_edges(const T &t0, const T &t1) -> size_t {
+auto network<T>::add_edges(const T &t0, const T &t1) noexcept -> size_t {
   return add_edge(t0, t1) + add_edge(t1, t0);
 }
 
 template<typename T>
-auto network<T>::neighbors(const T &t) -> boost::container::flat_set<T>& {
+auto network<T>::neighbors(const T &t) noexcept -> boost::container::flat_set<T>& {
   return m_net[t];
 }
 
 template<typename T>
-auto network<T>::operator[](const T &t) -> boost::container::flat_set<T>& {
+auto network<T>::operator[](const T &t) noexcept -> boost::container::flat_set<T>& {
   return m_net[t];
 }
 
 template<typename T>
-auto operator<<(std::ostream &os, const network<T> &net) -> std::ostream& {
+auto operator<<(std::ostream &os, const network<T> &net) noexcept -> std::ostream& {
   os << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
   os << "<graphml xmlns=\"http://graphml.graphdrawing.org/xmlns\"";
   os << " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"";
@@ -223,4 +224,4 @@ auto operator<<(std::ostream &os, const network<T> &net) -> std::ostream& {
 
 }
 
-#endif /* WAGNER_NETWORK_H_ */
+#endif

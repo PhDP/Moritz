@@ -12,53 +12,53 @@
 
 namespace wagner {
 
-species::species(size_t i, size_t ntraits)
+species::species(size_t i, size_t ntraits) noexcept
   : tbranch(nullptr, nullptr, nullptr), id{i}, m_traits{std::vector<float>(ntraits, 0.0f)} {
   //
 }
 
-species::species(size_t i, std::vector<float> const& starting_traits)
+species::species(size_t i, std::vector<float> const& starting_traits) noexcept
   : tbranch(nullptr, nullptr, nullptr), id(i), m_traits{starting_traits} {
   //
 }
 
-auto species::num_traits() const -> size_t {
+auto species::num_traits() const noexcept -> size_t {
   return m_traits.size();
 }
 
-auto species::traits() -> std::vector<float>& {
+auto species::traits() noexcept -> std::vector<float>& {
   return m_traits;
 }
 
-auto species::operator[](size_t idx) -> float& {
+auto species::operator[](size_t idx) noexcept -> float& {
   return m_traits[idx];
 }
 
-auto species::begin() const -> std::vector<float>::const_iterator {
+auto species::begin() const noexcept -> std::vector<float>::const_iterator {
   return m_traits.begin();
 }
 
-auto species::end() const -> std::vector<float>::const_iterator {
+auto species::end() const noexcept -> std::vector<float>::const_iterator {
   return m_traits.end();
 }
 
-size_t species::size() const {
+auto species::size() const noexcept -> size_t {
   return m_locations.size();
 }
 
-size_t species::num_groups() const {
+auto species::num_groups() const noexcept -> size_t {
   return m_groups;
 }
 
-bool species::is_in(const point &p) const {
+auto species::is_in(const point &p) const noexcept -> bool {
   return m_locations.find(p) != m_locations.end();
 }
 
-bool species::extinct() const {
+auto species::extinct() const noexcept -> bool {
   return m_locations.size() == 0;
 }
 
-boost::container::flat_set<point> species::pop_group(int g) {
+auto species::pop_group(int g) noexcept -> boost::container::flat_set<point> {
   boost::container::flat_set<point> gr;
   for (auto i : m_locations) {
     if (i.second == g) {
@@ -74,11 +74,11 @@ boost::container::flat_set<point> species::pop_group(int g) {
   return gr;
 }
 
-auto species::get_locations() const -> boost::container::flat_map<point, int> const& {
+auto species::get_locations() const noexcept -> boost::container::flat_map<point, int> const& {
   return m_locations;
 }
 
-size_t species::up_groups(network<point> &n) {
+auto species::up_groups(network<point> &n) noexcept -> size_t {
   size_t ngr = 0;
   for (auto i : m_locations) {
     m_locations[i.first] = -1;
@@ -94,7 +94,7 @@ size_t species::up_groups(network<point> &n) {
   return ngr;
 }
 
-void species::m_grouping(const point &p, int gid, network<point> &n) {
+auto species::m_grouping(const point &p, int gid, network<point> &n) noexcept -> void {
   auto ns = n.neighbors(p);
   for (auto i : ns) {
     if ((m_locations.find(i) != m_locations.end()) && m_locations[i] == -1) {
@@ -104,28 +104,28 @@ void species::m_grouping(const point &p, int gid, network<point> &n) {
   }
 }
 
-void species::add_to(const point &p) {
+auto species::add_to(const point &p) noexcept -> void {
   m_locations[p] = -1;
 }
 
-void species::add_to(const boost::container::flat_set<point> &ps) {
+auto species::add_to(const boost::container::flat_set<point> &ps) noexcept -> void {
   for (auto p : ps) {
     add_to(p);
   }
 }
 
-void species::rmv_from(const point &p) {
+auto species::rmv_from(const point &p) noexcept -> void {
   m_locations.erase(p);
 }
 
-size_t species::num_differences(const species &s) const {
+auto species::num_differences(const species &s) const noexcept -> size_t {
   size_t delta = 0;
   for (int i = 0; i < m_traits.size(); ++i)
     delta += m_traits[i] != s.m_traits[i];
   return delta;
 }
 
-bool species::same_traits_as(const species &s) const {
+auto species::same_traits_as(const species &s) const noexcept -> bool {
   for (int i = 0; i < m_traits.size(); ++i) {
     if (m_traits[i] != s.m_traits[i]) {
       return false;
@@ -134,7 +134,7 @@ bool species::same_traits_as(const species &s) const {
   return true;
 }
 
-size_t species::get_mrca(const species &s) const {
+auto species::get_mrca(const species &s) const noexcept -> size_t {
   tbranch *p = parent();
   boost::container::flat_set<tbranch *> parents;
   while (p != nullptr) {
@@ -149,7 +149,7 @@ size_t species::get_mrca(const species &s) const {
   return p->end_date();
 }
 
-size_t species::get_mrca(const boost::container::flat_set<tbranch *> &ps) const {
+auto species::get_mrca(const boost::container::flat_set<tbranch *> &ps) const noexcept -> size_t {
   tbranch *p = parent();
   assert(p != nullptr && ps.size() > 0);
   while (ps.find(p) == ps.end()) {
@@ -158,23 +158,23 @@ size_t species::get_mrca(const boost::container::flat_set<tbranch *> &ps) const 
   return p->end_date();
 }
 
-bool species::operator==(const species &s) const {
+auto species::operator==(const species &s) const noexcept -> bool {
   return id == s.id;
 }
 
-bool species::operator!=(const species &s) const {
+auto species::operator!=(const species &s) const noexcept -> bool {
   return id != s.id;
 }
 
-bool species::operator<(const species &s) const {
+auto species::operator<(const species &s) const noexcept -> bool {
   return id < s.id;
 }
 
-bool species::operator>(const species &s) const {
+auto species::operator>(const species &s) const noexcept -> bool {
   return id > s.id;
 }
 
-auto species::operator&(species &s) const -> boost::container::flat_set<point> {
+auto species::operator&(species &s) const noexcept -> boost::container::flat_set<point> {
   boost::container::flat_set<point> l;
   auto l0 = get_locations();
   auto l1 = s.get_locations();
@@ -186,19 +186,19 @@ auto species::operator&(species &s) const -> boost::container::flat_set<point> {
   return l;
 }
 
-std::string species::name() const {
+auto species::name() const noexcept -> std::string {
   std::ostringstream o;
   o << "species" << id;
   return o.str();
 }
 
-std::string species::newick() const {
+auto species::newick() const noexcept -> std::string {
   std::ostringstream o;
   o << "species" << id << ':' << parent_distance();
   return o.str();
 }
 
-std::string species::get_info(size_t time) const {
+auto species::get_info(size_t time) const noexcept -> std::string {
   std::ostringstream oss;
   oss << "<species> <id>" << id << "</id> <centroid>"
       << centroid(m_locations) << "</centroid> <locations>";
@@ -216,7 +216,7 @@ std::string species::get_info(size_t time) const {
   return oss.str();
 }
 
-std::ostream &operator<<(std::ostream &os, const species &s) {
+auto operator<<(std::ostream &os, const species &s) noexcept -> std::ostream& {
   os << "<species> <id>" << s.id << "</id> </species>";
   return os;
 }

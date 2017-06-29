@@ -15,7 +15,7 @@ enum class model {
 };
 
 inline auto operator<<(std::ostream& os, model const& m) -> std::ostream& {
-  switch(m) {
+  switch (m) {
     case model::wagner_neutral:
       os << "neutral";
       break;

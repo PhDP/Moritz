@@ -6,8 +6,8 @@ if (NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "RELEASE")
 endif ()
 
-option(BuildTest  "BuildTest"  ON)
-option(Sanitize   "Sanitize"   OFF)
+option(BuildTests  "BuildTests"  ON)
+option(Sanitize    "Sanitize"   OFF)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
@@ -36,7 +36,7 @@ include_directories(. ${Boost_INCLUDE_DIRS} ${PROJECT_SOURCE_DIR}/include)
 
 add_subdirectory(src)
 
-if (BuildTest)
+if (BuildTests)
   enable_testing()
   add_subdirectory(test)
 endif ()
@@ -46,7 +46,7 @@ message(STATUS "WAGNER BUILD SUMMARY")
 message(STATUS "  CMAKE_GENERATOR      : ${CMAKE_GENERATOR}")
 message(STATUS "  Compiler ID          : ${CMAKE_CXX_COMPILER_ID}")
 message(STATUS "  Build type           : ${CMAKE_BUILD_TYPE}")
-message(STATUS "  Build tests          : ${BuildTest}")
+message(STATUS "  Build tests          : ${BuildTests}")
 message(STATUS "  Sanitize flags       : ${Sanitize}")
 message(STATUS "  Boost include dirs   : ${Boost_INCLUDE_DIRS}")
 message(STATUS "  CXX_FLAGS            : ${CMAKE_CXX_FLAGS}")

@@ -11,7 +11,7 @@
 
 namespace wagner {
 
-speciestree::speciestree(std::vector<float> const& traits) {
+speciestree::speciestree(std::vector<float> const& traits) noexcept {
   m_id_count = 0;
   species *s0 = new species(m_id_count++, traits);
   m_tips.insert(s0);
@@ -19,16 +19,16 @@ speciestree::speciestree(std::vector<float> const& traits) {
   m_root = s0;
 }
 
-speciestree::~speciestree() {
+speciestree::~speciestree() noexcept {
   delete m_root;
 }
 
-size_t speciestree::num_species() {
+auto speciestree::num_species() noexcept -> size_t {
   return m_tips.size();
 }
 
-boost::container::flat_set<species *> speciestree::rmv_extinct(size_t date) {
-  boost::container::flat_set<species *> to_rmv;
+auto speciestree::rmv_extinct(size_t date) noexcept -> boost::container::flat_set<species*> {
+  boost::container::flat_set<species*> to_rmv;
   for (auto i : m_tips) {
     species *s = i;
     if (s->extinct()) {
@@ -64,7 +64,7 @@ boost::container::flat_set<species *> speciestree::rmv_extinct(size_t date) {
   return to_rmv;
 }
 
-species* speciestree::speciate(species* p, size_t date) {
+auto speciestree::speciate(species* p, size_t date) noexcept -> species* {
   species *s0 = p;
   tbranch *new_parent = new tbranch(s0->parent(), nullptr, nullptr);
   new_parent->set_end_date(date);
@@ -99,33 +99,33 @@ species* speciestree::speciate(species* p, size_t date) {
   return s1;
 }
 
-void speciestree::stop(size_t date) {
+auto speciestree::stop(size_t date) noexcept -> void {
   for (auto i : m_tips) {
     i->set_end_date(date);
   }
 }
 
-std::string speciestree::newick() const {
+auto speciestree::newick() const noexcept -> std::string {
   return (m_root == nullptr) ? ";" : m_root->newick();
 }
 
-boost::container::flat_set<species*>::iterator speciestree::begin() {
+auto speciestree::begin() noexcept -> boost::container::flat_set<species*>::iterator {
   return m_tips.begin();
 }
 
-boost::container::flat_set<species*>::iterator speciestree::end() {
+auto speciestree::end() noexcept -> boost::container::flat_set<species*>::iterator {
   return m_tips.end();
 }
 
-boost::container::flat_set<species*>::const_iterator speciestree::begin() const {
+auto speciestree::begin() const noexcept -> boost::container::flat_set<species*>::const_iterator {
   return m_tips.begin();
 }
 
-boost::container::flat_set<species*>::const_iterator speciestree::end() const {
+auto speciestree::end() const noexcept -> boost::container::flat_set<species*>::const_iterator {
   return m_tips.end();
 }
 
-std::ostream& operator<<(std::ostream &os, const speciestree &t) {
+auto operator<<(std::ostream &os, const speciestree &t) noexcept -> std::ostream& {
   os << t.newick();
   return os;
 }
