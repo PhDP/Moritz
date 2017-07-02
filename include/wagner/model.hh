@@ -7,29 +7,25 @@ namespace wagner {
 
 // Models:
 enum class model {
-  wagner_neutral = 0,
-  wagner_aleph = 1,
-  wagner_logistic = 2,
-  wagner_log_aleph = 3,
-  wagner_traits = 4
+  neutral = 0,
+  phylo_dist = 1,
+  euclidean_traits = 2,
+  fuzzy_traits = 3
 };
 
 inline auto operator<<(std::ostream& os, model const& m) -> std::ostream& {
   switch (m) {
-    case model::wagner_neutral:
+    case model::neutral:
       os << "neutral";
       break;
-    case model::wagner_aleph:
-      os << "aleph";
+    case model::phylo_dist:
+      os << "phylogenetic distance";
       break;
-    case model::wagner_logistic:
-      os << "logistic";
+    case model::euclidean_traits:
+      os << "euclidean traits";
       break;
-    case model::wagner_log_aleph:
-      os << "log aleph";
-      break;
-    case model::wagner_traits:
-      os << "with traits";
+    case model::fuzzy_traits:
+      os << "fuzzy traits";
       break;
   }
   return os;

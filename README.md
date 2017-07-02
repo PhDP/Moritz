@@ -43,10 +43,9 @@ You can change the model with:
 The current version supports four models:
 
     0   Neutral model
-    1   Model with aleph (see arXiv paper) [default]
-    2   Model with logistic speciation (decreases with the total number of species).
-    3   Model with both aleph and logistic speciation.
-    4   Model with traits (set option n for the number of traits)
+    1   Phylogenetic distance
+    2   Euclidean distance with traits [default]
+    3   Fuzzy distance with traits
 
 You can also use the following options [default values]:
 
@@ -56,11 +55,10 @@ You can also use the following options [default values]:
     -t          Number of time steps. Needs to be a power of two [512].
     -e          Per population extinction rate [0.05].
     -m          Max migration rate [0.04].
-    -n          Number of traits for the traits model [10].
+    -n          Number of traits for models 2-3 [10].
     -w          Standard deviation of the white noise applied to traits after each time step [0.001].
-    -a          Aleph for models 1 and 3 [10.0].
-    -s          Speciation rate (or max speciation rate for logistic models) [0.04].
-    -se         With logistic speciation and n species, the speciation rate is 2s/(1 + se^n) [1.02].
+    -a          Aleph for models 1-2 [10.0].
+    -s          Speciation rate [0.04].
     -r          Radius of the random geometric network [0.2].
 
 Options not followed by an argument

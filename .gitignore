@@ -22,6 +22,7 @@ doc
 
 # Visual Studio files
 *.vcxproj
+*.vscode
 *.filters
 *.dir
 *.sln
