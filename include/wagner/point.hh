@@ -3,8 +3,7 @@
 
 #include <iostream>
 #include <cmath>
-#include <boost/container/flat_set.hpp>
-#include <boost/container/flat_map.hpp>
+#include "wagner/common.hh"
 
 namespace wagner {
 
@@ -63,7 +62,7 @@ inline auto mid_point(const point &p1, const point &p2) noexcept -> point {
 }
 
 /** Find the centroid of a set of points. */
-inline auto centroid(const boost::container::flat_set<point> &ps) noexcept -> point {
+inline auto centroid(const set<point> &ps) noexcept -> point {
   double x_ = 0.0;
   double y_ = 0.0;
 
@@ -78,7 +77,7 @@ inline auto centroid(const boost::container::flat_set<point> &ps) noexcept -> po
 }
 
 /** Find the centroid of a set of points. */
-inline auto centroid(const boost::container::flat_map<point, int> &ps) noexcept -> point {
+inline auto centroid(const map<point, int> &ps) noexcept -> point {
   double x_ = 0.0;
   double y_ = 0.0;
 

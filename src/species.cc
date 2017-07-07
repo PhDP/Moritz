@@ -5,6 +5,7 @@
 #include <map>
 #include <set>
 #include <cassert>
+#include "wagner/common.hh"
 #include "wagner/tbranch.hh"
 #include "wagner/network.hh"
 #include "wagner/species.hh"
@@ -58,8 +59,8 @@ auto species::extinct() const noexcept -> bool {
   return m_locations.size() == 0;
 }
 
-auto species::pop_group(int g) noexcept -> boost::container::flat_set<point> {
-  boost::container::flat_set<point> gr;
+auto species::pop_group(int g) noexcept -> set<point> {
+  set<point> gr;
   for (auto i : m_locations) {
     if (i.second == g) {
       gr.insert(i.first);
@@ -74,7 +75,7 @@ auto species::pop_group(int g) noexcept -> boost::container::flat_set<point> {
   return gr;
 }
 
-auto species::get_locations() const noexcept -> boost::container::flat_map<point, int> const& {
+auto species::get_locations() const noexcept -> map<point, int> const& {
   return m_locations;
 }
 
@@ -108,7 +109,7 @@ auto species::add_to(const point &p) noexcept -> void {
   m_locations[p] = -1;
 }
 
-auto species::add_to(const boost::container::flat_set<point> &ps) noexcept -> void {
+auto species::add_to(const set<point> &ps) noexcept -> void {
   for (auto p : ps) {
     add_to(p);
   }
@@ -136,7 +137,7 @@ auto species::same_traits_as(const species &s) const noexcept -> bool {
 
 auto species::get_mrca(const species &s) const noexcept -> size_t {
   tbranch *p = parent();
-  boost::container::flat_set<tbranch *> parents;
+  set<tbranch *> parents;
   while (p != nullptr) {
     parents.insert(p);
     p = p->parent();
@@ -149,7 +150,7 @@ auto species::get_mrca(const species &s) const noexcept -> size_t {
   return p->end_date();
 }
 
-auto species::get_mrca(const boost::container::flat_set<tbranch *> &ps) const noexcept -> size_t {
+auto species::get_mrca(const set<tbranch *> &ps) const noexcept -> size_t {
   tbranch *p = parent();
   assert(p != nullptr && ps.size() > 0);
   while (ps.find(p) == ps.end()) {
@@ -174,8 +175,8 @@ auto species::operator>(const species &s) const noexcept -> bool {
   return id > s.id;
 }
 
-auto species::operator&(species &s) const noexcept -> boost::container::flat_set<point> {
-  boost::container::flat_set<point> l;
+auto species::operator&(species &s) const noexcept -> set<point> {
+  set<point> l;
   auto l0 = get_locations();
   auto l1 = s.get_locations();
   for (auto const& i : l0) {

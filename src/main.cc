@@ -3,7 +3,6 @@
 #include <random>
 #include <vector>
 #include <cstring>
-#include "wagner/common.hh"
 #include "wagner/simulation.hh"
 #include "wagner/model.hh"
 

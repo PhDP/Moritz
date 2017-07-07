@@ -5,8 +5,6 @@
 #include <string>
 #include <random>
 #include <vector>
-#include <boost/container/flat_set.hpp>
-#include <boost/container/flat_map.hpp>
 
 #include <cstring>
 #include <cassert>
@@ -205,7 +203,7 @@ void simulation(model m, size_t seed, size_t t_max, size_t communities,
       assert(new_species->num_traits() == traits);
 
       // Transfer populations:
-      boost::container::flat_set<wagner::point> to_transfer = to_speciate->pop_group(i);
+      set<wagner::point> to_transfer = to_speciate->pop_group(i);
       new_species->add_to(to_transfer);
       --speciation_events;
     }
@@ -218,7 +216,7 @@ void simulation(model m, size_t seed, size_t t_max, size_t communities,
     }
 
     // Epilogue = remove extinct species from the most recent common ancestor
-    boost::container::flat_set<wagner::species*> to_rmv = tree.rmv_extinct(t);
+    set<wagner::species*> to_rmv = tree.rmv_extinct(t);
     ext_per_t.push_back(to_rmv.size());
     species_per_t.push_back(tree.num_species());
 

@@ -4,8 +4,7 @@
 #include <iostream>
 #include <set>
 #include <vector>
-#include <boost/container/flat_set.hpp>
-#include <boost/container/flat_map.hpp>
+#include "wagner/common.hh"
 #include "wagner/tbranch.hh"
 #include "wagner/network.hh"
 #include "wagner/point.hh"
@@ -15,7 +14,7 @@ namespace wagner {
 /** Species as the leaf of a phylogenetic tree. */
 class species : public tbranch {
   std::vector<float> m_traits;
-  boost::container::flat_map<point, int> m_locations; // Location/group map.
+  map<point, int> m_locations; // Location/group map.
   auto m_grouping(const point &p, int gid, network<point> &n) noexcept -> void; // Recursive function used to establish the groups.
   size_t m_groups; // Number of groups.
 
@@ -59,10 +58,10 @@ class species : public tbranch {
 
   /** Pop the gth group (that is: store the set of locations in a set, remove
     * them from this species and return it. */
-  auto pop_group(int g) noexcept -> boost::container::flat_set<point>;
+  auto pop_group(int g) noexcept -> set<point>;
 
   /** Return the set of locations. */
-  auto get_locations() const noexcept -> boost::container::flat_map<point, int> const&;
+  auto get_locations() const noexcept -> map<point, int> const&;
 
   /** Test if the species is at the given location. */
   auto is_in(const point &p) const noexcept -> bool;
@@ -71,7 +70,7 @@ class species : public tbranch {
   auto add_to(const point &p) noexcept -> void;
 
   /** Add a location to the species. */
-  auto add_to(const boost::container::flat_set<point> &ps) noexcept -> void;
+  auto add_to(const set<point> &ps) noexcept -> void;
 
   /** Remove the species from a location. */
   auto rmv_from(const point &p) noexcept -> void;
@@ -86,10 +85,10 @@ class species : public tbranch {
   auto get_mrca(const species &s) const noexcept -> size_t;
 
   /** Get most-recent-common-ancestor info given a set of parents. */
-  auto get_mrca(const boost::container::flat_set<tbranch*> &ps) const noexcept -> size_t;
+  auto get_mrca(const set<tbranch*> &ps) const noexcept -> size_t;
 
   /** Return the set of locations where both species are found (co-occurence). */
-  auto operator&(species &s) const noexcept -> boost::container::flat_set<point>;
+  auto operator&(species &s) const noexcept -> set<point>;
 
   /** Return the species' name. */
   auto name() const noexcept -> std::string;

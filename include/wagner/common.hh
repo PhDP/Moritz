@@ -3,7 +3,29 @@
 
 #include <cmath>
 
+#ifndef WAGNER_NOBOOST
+  #include <boost/container/flat_set.hpp>
+  #include <boost/container/flat_map.hpp>
+#else
+  #include <set>
+  #include <map>
+#endif
+
 namespace wagner {
+
+#ifndef WAGNER_NOBOOST
+  template<typename Key>
+  using set = boost::container::flat_set<Key>;
+
+  template<typename Key, typename Value>
+  using map = boost::container::flat_map<Key, Value>;
+#else
+  template<typename Key>
+  using set = std::set<Key>;
+
+  template<typename Key, typename Value>
+  using map = std::map<Key, Value>;
+#endif
 
 constexpr size_t wagner_version = 2;
 constexpr size_t wagner_revision = 0;
@@ -49,4 +71,4 @@ constexpr size_t wagner_revision = 0;
 
 }
 
-#endif /* WAGNER_COMMON_H */
+#endif

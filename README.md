@@ -1,5 +1,5 @@
-Wagner
-======
+# Wagner
+
 ![badge.cpp](https://img.shields.io/badge/c++-14-008080.svg?style=flat-square)
 [![license][badge.license]][license]
 
@@ -15,13 +15,14 @@ understanding of speciation.
 The program is written in C++14. Tested on Linux 64-bit with clang++ 4.0
 and g++ 6.3.0.
 
-reference
----------
+## Reference
+
 Working paper: http://arxiv.org/abs/1203.1790
 
-dependencies
-------------
-* [boost](http://www.boost.org/)
+## Dependencies
+
+* [boost](http://www.boost.org/) [optional]. Will default to the much slower
+  std::set/std::map if boost is unavailable.
 * [cmake](https://cmake.org/) for building
 
 usage and options
@@ -73,7 +74,6 @@ Will run the model 1 with aleph = 50, and seed = 88. The order of the options
 doesn't matter and all parameters should be printed in the xml output file. If
 the number of time steps supplied is not a power of two, the problem will find
 the largest power of two that fits in this number.
-
 
 license
 -------

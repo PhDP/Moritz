@@ -1,6 +1,5 @@
 #include <ostream>
 #include <string>
-#include <set>
 #include <list>
 #include "wagner/common.hh"
 #include "wagner/speciestree.hh"
@@ -27,8 +26,8 @@ auto speciestree::num_species() noexcept -> size_t {
   return m_tips.size();
 }
 
-auto speciestree::rmv_extinct(size_t date) noexcept -> boost::container::flat_set<species*> {
-  boost::container::flat_set<species*> to_rmv;
+auto speciestree::rmv_extinct(size_t date) noexcept -> set<species*> {
+  set<species*> to_rmv;
   for (auto i : m_tips) {
     species *s = i;
     if (s->extinct()) {
@@ -109,19 +108,19 @@ auto speciestree::newick() const noexcept -> std::string {
   return (m_root == nullptr) ? ";" : m_root->newick();
 }
 
-auto speciestree::begin() noexcept -> boost::container::flat_set<species*>::iterator {
+auto speciestree::begin() noexcept -> set<species*>::iterator {
   return m_tips.begin();
 }
 
-auto speciestree::end() noexcept -> boost::container::flat_set<species*>::iterator {
+auto speciestree::end() noexcept -> set<species*>::iterator {
   return m_tips.end();
 }
 
-auto speciestree::begin() const noexcept -> boost::container::flat_set<species*>::const_iterator {
+auto speciestree::begin() const noexcept -> set<species*>::const_iterator {
   return m_tips.begin();
 }
 
-auto speciestree::end() const noexcept -> boost::container::flat_set<species*>::const_iterator {
+auto speciestree::end() const noexcept -> set<species*>::const_iterator {
   return m_tips.end();
 }
 

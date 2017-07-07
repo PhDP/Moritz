@@ -5,6 +5,7 @@
 #include <cmath>
 #include <random>
 #include <algorithm>
+#include "wagner/common.hh"
 
 namespace wagner {
 

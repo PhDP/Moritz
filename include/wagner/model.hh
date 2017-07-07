@@ -2,6 +2,7 @@
 #define WAGNER_MODEL_HH_
 
 #include <iostream>
+#include "wagner/common.hh"
 
 namespace wagner {
 
