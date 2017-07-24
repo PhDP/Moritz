@@ -15,6 +15,10 @@ understanding of speciation.
 The program is written in C++14. Tested on Linux 64-bit with clang++ 4.0
 and g++ 6.3.0.
 
+The program outputs xml files for info and a graphml file for the network
+of communities. The python folder has scripts to extract information from
+the raw results.
+
 ## Reference
 
 Working paper: http://arxiv.org/abs/1203.1790
