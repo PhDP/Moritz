@@ -23,9 +23,6 @@ void simulation(model m, size_t seed, size_t t_max, size_t communities,
                 size_t traits, double ext_max, double mig_max,
                 double aleph, double speciation, double radius,
                 float white_noise_std) noexcept {
-
-  std::cout << seed << std::endl;
-
   const bool has_traits = m == model::euclidean_traits || m == model::fuzzy_traits;
 
   std::vector<size_t> speciation_per_t;
@@ -104,7 +101,6 @@ void simulation(model m, size_t seed, size_t t_max, size_t communities,
           if (presences.find(location) == presences.end()) {
             double mig = mig_max;
 
-            // TODO: check maths (seem wrong for traits), handle fuzzy:
             if (m != model::neutral) {
               double delta = 0.0;
               for (auto s1 : tree) {
@@ -118,11 +114,16 @@ void simulation(model m, size_t seed, size_t t_max, size_t communities,
                     } else if (m == model::phylo_dist) {
                       delta += 1.0 / (t - s0->get_mrca(*s1));
                       break;
+                    } else if (m == model::fuzzy_traits) {
+                      const auto prox = 1.0 - wagner::euclidean_distance(s0->traits(), s1->traits());
+                      assert(dist >= 0.0f && dist <= 1.0f);
+                      if (prox > delta)
+                        delta = prox;
                     }
                   }
                 }
               }
-              mig *= exp(-aleph * delta);
+              mig *= (m == model::fuzzy_traits? 1.0 - delta : exp(-aleph * delta));
             }
 
             if (!s0->is_in(location) && unif(rng) < mig) {
