@@ -116,7 +116,7 @@ void simulation(model m, size_t seed, size_t t_max, size_t communities,
                       break;
                     } else if (m == model::fuzzy_traits) {
                       const auto prox = 1.0 - wagner::euclidean_distance(s0->traits(), s1->traits());
-                      assert(dist >= 0.0f && dist <= 1.0f);
+                      assert(prox >= 0.0f && prox <= 1.0f);
                       if (prox > delta)
                         delta = prox;
                     }
