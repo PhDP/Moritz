@@ -25,7 +25,7 @@ Working paper: http://arxiv.org/abs/1203.1790
 
 ## Dependencies
 
-* [boost](http://www.boost.org/) [optional]. Will default to the much slower
+* [boost](http://www.boost.org/) [optional]. Wagner defaults to the much slower
   std::set/std::map if boost is unavailable.
 * [cmake](https://cmake.org/) for building
 
