@@ -15,6 +15,9 @@ class network {
   auto m_test_connectivity(map<T, bool> &vs, const T &t) noexcept -> void;
 
  public:
+ 
+  using const_iterator = typename map<T, set<T>>::const_iterator; 
+ 
   /** Basic constructor. */
   network() noexcept {
     //
@@ -40,33 +43,37 @@ class network {
   /** Destroy all vertices and create a random geometric graph. */
   auto rgg(size_t order, double radius, std::mt19937_64 &rng) noexcept -> void;
 
-  /** Return true if the network is strongly connected. */
+  // static auto make_rgg(size_t order, double radius, std::mt19937_64& rng) -> network<T>;
+  // static auto make_rg(size_t order, double alpha, std::mt19937_64& rng) -> network<T>;
+  // static auto make_grid(size_t rows, size_t columns) -> network<T>;
+
+  /** Returns true if the network is strongly connected. */
   auto connected() noexcept -> bool;
 
-  /** Return one vertex of the graph at random. */
-  auto random_vertex(std::mt19937_64 &rng) noexcept -> T; // What????
+  /** Returns one vertex of the graph at random. */
+  auto random_vertex(std::mt19937_64 &rng) const noexcept -> const_iterator;
 
-  /** Return true if the vertex is present. */
+  /** Returns true if the vertex is present. */
   auto has_vertex(const T &t) const noexcept -> bool;
 
-  /** Return true if an edge is present between v0 and v1. */
-  auto has_edge(const T &t0, const T &t1) noexcept -> bool;
+  /** Returns true if an edge is present between v0 and v1. */
+  auto has_edge(const T &t0, const T &t1) const noexcept -> bool;
 
-  /** Add a vertex. */
+  /** Adds a vertex. */
   auto add_vertex(const T &t) noexcept -> bool;
 
-  /** Add an edge between vertices v0 and v1. */
+  /** Adds an edge between vertices v0 and v1. */
   auto add_edge(const T &t0, const T &t1) noexcept -> size_t;
 
-  /** Add an edge between vertives v0 and v1 and betwen v1 and v0. Return the
+  /** Adds an edge between vertives v0 and v1 and betwen v1 and v0. Return the
    * number of edges added. */
   auto add_edges(const T &t0, const T &t1) noexcept -> size_t;
 
-  /** Return the set of neighbors for vertex 'v'. */
-  auto neighbors(const T &t) noexcept -> set<T>&;
+  /** Returns the set of neighbors for vertex 'v'. */
+  auto neighbors(const T &t) const noexcept -> set<T> const&;
 
-  /** Return the set of neighbors for vertex 'v'. */
-  auto operator[](const T &t) noexcept -> set<T>&;
+  /** Returns the set of neighbors for vertex 'v'. */
+  auto operator[](const T &t) const noexcept -> set<T> const&;
 
   // Iterate the network:
   auto begin() noexcept -> typename map<T, set<T>>::iterator {
@@ -116,16 +123,14 @@ auto network<T>::connected() noexcept -> bool {
 }
 
 template<typename T>
-auto network<T>::random_vertex(std::mt19937_64 &rng) noexcept -> T {
-  std::uniform_int_distribution<> unif(0, m_net.size());
-  const size_t v = unif(rng);
-  size_t index = 0;
-  for (auto i : m_net) {
-    if (v == index++) {
-      return i.first;
-    }
+auto network<T>::random_vertex(std::mt19937_64 &rng) const noexcept -> const_iterator {
+  if (m_net.size() < 2) {
+    return m_net.begin();
   }
-  exit(EXIT_FAILURE);
+  auto unif = std::uniform_int_distribution<size_t>(0, m_net.size() - 1);
+  auto it = m_net.begin();
+  std::advance(it, unif(rng));
+  return it;
 }
 
 template<typename T>
@@ -134,7 +139,7 @@ auto network<T>::rgg(size_t order, double radius, std::mt19937_64 &rng) noexcept
   m_net.clear();
   for (int i = 0; i < order; ++i) {
     T p(unif(rng), unif(rng));
-    set<T> emps;
+    auto emps = set<T>{};
     m_net.insert(std::pair<T, set<T>>(p, emps));
   }
   for (auto i : m_net) {
@@ -152,12 +157,8 @@ auto network<T>::has_vertex(const T &t) const noexcept -> bool {
 }
 
 template<typename T>
-auto network<T>::has_edge(const T &t0, const T &t1) noexcept -> bool {
-  if (has_vertex(t0) && has_vertex(t1)) {
-    return (m_net[t0].find(t1) != m_net[t0].end());
-  } else {
-    return false;
-  }
+auto network<T>::has_edge(const T &t0, const T &t1) const noexcept -> bool {
+  return has_vertex(t0) && has_vertex(t1) && (m_net.at(t0).find(t1) != m_net.at(t0).end());
 }
 
 template<typename T>
@@ -165,13 +166,13 @@ auto network<T>::add_vertex(const T &t) noexcept -> bool {
   if (has_vertex(t)) {
     return false;
   } else {
-    set<T> emps;
+    auto emps = set<T>{};
     m_net.insert(std::pair<T, set<T>>(t, emps));
     return true;
   }
 }
 
-template <typename T>
+template<typename T>
 auto network<T>::add_edge(const T &t0, const T &t1) noexcept -> size_t {
   if (has_vertex(t0)) {
     if (has_edge(t0, t1)) {
@@ -191,13 +192,13 @@ auto network<T>::add_edges(const T &t0, const T &t1) noexcept -> size_t {
 }
 
 template<typename T>
-auto network<T>::neighbors(const T &t) noexcept -> set<T>& {
-  return m_net[t];
+auto network<T>::neighbors(const T &t) const noexcept -> set<T> const& {
+  return m_net.at(t);
 }
 
 template<typename T>
-auto network<T>::operator[](const T &t) noexcept -> set<T>& {
-  return m_net[t];
+auto network<T>::operator[](const T &t) const noexcept -> set<T> const& {
+  return m_net.at(t);
 }
 
 template<typename T>

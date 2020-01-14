@@ -7,8 +7,6 @@
 
 namespace wagner {
 
-// using point = std::tuple<double, double>;
-
 /** A two-dimensional point. */
 struct point {
   /** x-coordinate. */
